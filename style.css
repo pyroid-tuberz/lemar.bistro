@@ -1,0 +1,617 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@400;700&family=Poppins:wght@400;600;700&display=swap');
+
+html {
+    scroll-behavior: smooth;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #121212;
+    background-size: cover;
+    background-position: center;
+    /* Added for mobile optimization */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    transition: background-image 1s ease-in-out;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    color: #EAEAEA;
+    box-sizing: border-box;
+}
+
+.header {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #FFFFFF;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    position: relative;
+    background-position: center;
+    /* Added for mobile optimization */
+}
+
+.header h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 6rem;
+    margin: 0;
+    font-weight: 700;
+}
+
+.menu-button {
+    padding: 15px 35px;
+    /* Increased padding */
+    margin-top: 30px;
+    background-color: transparent;
+    color: #FFC700;
+    border: 2px solid #FFC700;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.3rem;
+    /* Increased font-size */
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+}
+
+.menu-button:hover {
+    background-color: #FFC700;
+    color: #1A1A1A;
+    transform: translateY(-3px);
+    box-shadow: 0px 8px 25px rgba(255, 199, 0, 0.3);
+}
+
+.main-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 20px 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-nav a {
+    color: #FFFFFF;
+    text-decoration: none;
+    margin: 0 20px;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.main-nav a:hover {
+    color: #FFC700;
+}
+
+.hamburger {
+    display: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 10px;
+    z-index: 1001;
+}
+
+.hamburger-bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    background-color: #FFFFFF;
+    transition: all 0.3s ease-in-out;
+}
+
+.content-section {
+    background-color: rgba(18, 18, 18, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 80px 20px;
+}
+
+.section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: 3.5rem;
+    color: #FFC700;
+    margin-bottom: 40px;
+}
+
+.section-paragraph {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+    color: rgba(234, 234, 234, 0.8);
+}
+
+.section-divider {
+    height: 2px;
+    background: linear-gradient(to right, transparent, #FFC700, transparent);
+    border: none;
+    opacity: 0.5;
+}
+
+/* Scroll Animation */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.scroll-animate.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+#menu-section {
+    padding: 80px 20px;
+    background-color: transparent;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- PREMIUM MENU STYLES --- */
+
+/* GALLERY GRID DESKTOP */
+/* Force 4 columns on desktop to make images smaller */
+/* GALLERY GRID DESKTOP */
+/* Balanced: 3 columns, restricted width (User Request: max-width 1200px) */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    padding: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+    /* Center the grid */
+}
+
+.gallery-item img {
+    border-radius: 12px;
+    width: 100%;
+    height: 400px;
+    /* High vertical profile */
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+#menu-section {
+    padding: 80px 20px;
+    background-color: transparent;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px;
+}
+
+.menu-system {
+    width: 100%;
+    max-width: 900px;
+    height: 85vh;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.4);
+    /* Glass Effect */
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* SEARCH BAR STYLES */
+.search-container {
+    padding: 20px 30px 10px 30px;
+    position: relative;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+}
+
+#search-input {
+    width: 100%;
+    max-width: 500px;
+    padding: 12px 20px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+#search-input:focus {
+    outline: none;
+    border-color: #FFC700;
+    box-shadow: 0 0 15px rgba(255, 199, 0, 0.3);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+#search-input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Navigation Control Buttons (Back / Home) */
+.nav-control-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    flex-grow: 1;
+    /* Make them equal width */
+}
+
+.nav-control-btn:hover {
+    background: #FFC700;
+    color: #1A1A1A;
+    border-color: #FFC700;
+}
+
+/* MENU PANEL & NAV */
+.menu-panel {
+    position: absolute;
+    top: 130px;
+    /* Increased top spacing to fit Search + Nav Bar */
+    left: 0;
+    width: 100%;
+    height: calc(100% - 130px);
+    transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    padding: 0 40px 40px 40px;
+    /* Reduced top padding */
+    box-sizing: border-box;
+    z-index: 10;
+    background: transparent;
+    overflow-y: auto;
+
+    /* Scrollbar Styling */
+    scrollbar-width: thin;
+    scrollbar-color: #FFC700 transparent;
+}
+
+.menu-panel.is-active {
+    transform: translateX(0);
+    z-index: 20;
+}
+
+/* Typography */
+.panel-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    text-align: center;
+    color: #FFC700;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Buttons */
+.nav-button,
+.menu-back-button {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #EAEAEA;
+    padding: 20px;
+    font-size: 1.2rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-button:hover,
+.menu-back-button:hover {
+    background: rgba(255, 199, 0, 0.15);
+    border-color: #FFC700;
+    color: #FFC700;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.menu-back-button {
+    font-size: 0.9rem;
+    padding: 8px 20px;
+    position: absolute;
+    top: 5px;
+    /* Adjusted position */
+    left: 40px;
+    width: auto;
+    z-index: 100;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Menu Items (Cards) */
+.menu-item-list .menu-item {
+    margin-bottom: 15px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.menu-item-list .menu-item:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.menu-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.menu-item-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    font-family: 'Playfair Display', serif;
+    color: #fff;
+}
+
+.menu-item-price {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #FFC700;
+}
+
+.menu-item-description {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .menu-system {
+        height: 95vh;
+    }
+
+    .panel-title {
+        font-size: 2rem;
+        margin-top: 30px;
+    }
+
+    .main-menu {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .main-menu .nav-button {
+        height: 120px;
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .menu-panel {
+        padding: 20px;
+        top: 60px;
+        height: calc(100% - 60px);
+    }
+
+    .search-container {
+        padding: 15px 20px 5px 20px;
+    }
+
+    /* Sub-menu buttons full width */
+    .menu-panel:not([data-panel-id="root"]) .nav-button {
+        width: 100%;
+    }
+
+    .menu-back-button {
+        top: 0;
+        left: 20px;
+    }
+}
+
+.contact-container {
+    display: flex;
+    gap: 40px;
+    text-align: left;
+}
+
+.contact-info,
+.contact-map {
+    flex: 1;
+}
+
+.contact-info h3 {
+    color: #FFC700;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.contact-info p {
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.contact-map iframe {
+    border-radius: 10px;
+    width: 100% !important;
+    /* Override inline HTML width attribute */
+    max-width: 100%;
+    height: 300px;
+    box-sizing: border-box;
+    /* Prevent padding/border from adding to width */
+}
+
+.main-footer {
+    background-color: #121212;
+    padding: 40px 20px;
+    color: rgba(234, 234, 234, 0.6);
+}
+
+.social-links {
+    margin-bottom: 20px;
+}
+
+.social-links a {
+    color: #EAEAEA;
+    margin: 0 15px;
+    transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+    color: #FFC700;
+}
+
+.social-links svg {
+    width: 28px;
+    height: 28px;
+}
+
+.sabah {
+    background-image: url('sabah.png');
+}
+
+.oglen {
+    background-image: url('oglen.jpg');
+}
+
+.aksam {
+    background-image: url('aksam.jpg');
+}
+
+/* Snowflake styles */
+.snowflake {
+    position: fixed;
+    top: -10px;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    animation-name: fall;
+    animation-timing-function: linear;
+    z-index: 9999;
+    /* Ensure snowflakes are on top */
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(110vh);
+    }
+}
+
+/* Mobile optimizations */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 768px) {
+    .snowflake {
+        display: none;
+    }
+
+    .header h1 {
+        font-size: 3rem;
+        /* Slightly smaller */
+    }
+
+    .menu-system {
+        height: 95vh;
+        /* Increased from default 80vh */
+    }
+
+    .menu-panel {
+        padding: 20px;
+        /* Reduced padding */
+        width: 100%;
+    }
+
+    /* Root menu grid mobile optimization */
+    .main-menu {
+        grid-template-columns: repeat(2, 1fr);
+        /* Force 2 columns */
+        gap: 10px;
+    }
+
+    .main-menu .nav-button {
+        height: 140px;
+        /* Reduced height */
+        padding: 10px;
+    }
+
+    .main-menu .nav-button svg {
+        width: 32px;
+        height: 32px;
+    }
+
+    .main-menu .nav-button span {
+        font-size: 1rem;
+    }
+
+    /* Sub-menus mobile optimization */
+    .menu-panel:not([data-panel-id="root"]) .nav-button {
+        width: 95% !important;
+        /* Full width for easier tapping */
+        margin: 0 auto;
+        padding: 15px;
+    }
+
+    .menu-back-button {
+        top: 15px;
+        left: 15px;
+        font-size: 0.9rem;
+        padding: 8px 15px;
+    }
+
+    .panel-title {
+        font-size: 2rem;
+        margin-top: 40px;
+        /* Space for back button */
+        margin-bottom: 20px;
+    }
+
+    /* Items List */
+    .menu-item-header {
+        grid-template-columns: 1fr auto;
+    }
+
+    .menu-item-name {
+        font-size: 1.1rem;
+    }
+
+    .menu-item-price {
+        font-size: 1.1rem;
+    }
+
+    .contact-container {
+        flex-direction: column;
+    }
+}
