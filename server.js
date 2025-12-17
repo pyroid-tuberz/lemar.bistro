@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'menu.json');
 const GALLERY_FILE = path.join(__dirname, 'gallery.json');
 const BACKGROUNDS_FILE = path.join(__dirname, 'backgrounds.json');
+const DATA_JS_FILE = path.join(__dirname, 'data.js'); // New: Target for portable data
 
 // Multer Config for Uploads
 const storage = multer.diskStorage({
@@ -45,6 +46,30 @@ const checkAuth = (req, res, next) => {
         res.status(401).json({ error: 'Unauthorized' });
     }
 };
+
+// --- HELPER: Sync JSON to data.js for Portable Mode ---
+async function updateDataJs() {
+    try {
+        const [menu, gallery, backgrounds] = await Promise.all([
+            fs.readFile(DATA_FILE, 'utf8').catch(() => '{"items":[],"categories":{}}'),
+            fs.readFile(GALLERY_FILE, 'utf8').catch(() => '{"images":[]}'),
+            fs.readFile(BACKGROUNDS_FILE, 'utf8').catch(() => '{}')
+        ]);
+
+        const content = `
+window.LEMAR_MENU = ${menu};
+window.LEMAR_GALLERY = ${gallery};
+window.LEMAR_BACKGROUNDS = ${backgrounds};
+`;
+        await fs.writeFile(DATA_JS_FILE, content, 'utf8');
+        console.log('data.js updated successfully.');
+    } catch (err) {
+        console.error('Failed to update data.js:', err);
+    }
+}
+
+// Update data.js on startup
+updateDataJs();
 
 // Login Endpoint
 app.post('/api/login', (req, res) => {
@@ -88,6 +113,7 @@ app.post('/api/menu/item', checkAuth, async (req, res) => {
         }
 
         await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs(); // Sync
         res.json({ success: true, item });
     } catch (err) {
         console.error(err);
@@ -112,6 +138,7 @@ app.post('/api/category', checkAuth, async (req, res) => {
         };
 
         await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs(); // Sync
         res.json({ success: true, category: data.categories[id] });
     } catch (err) {
         console.error(err);
@@ -135,6 +162,7 @@ app.delete('/api/category/:id', checkAuth, async (req, res) => {
         // User can manage that.
 
         await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs(); // Sync
         res.json({ success: true });
     } catch (err) {
         console.error(err);
@@ -157,6 +185,7 @@ app.delete('/api/menu/item/:id', checkAuth, async (req, res) => {
         }
 
         await fs.writeFile(DATA_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs(); // Sync
         res.json({ success: true });
     } catch (err) {
         console.error(err);
@@ -205,6 +234,7 @@ app.post('/api/gallery', checkAuth, upload.single('image'), async (req, res) => 
         data.images.push(newImage);
 
         await fs.writeFile(GALLERY_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs(); // Sync
         res.json({ success: true, image: newImage });
     } catch (err) {
         console.error(err);
@@ -222,6 +252,7 @@ app.delete('/api/gallery', checkAuth, async (req, res) => {
         data.images = data.images.filter(img => img.src !== src);
 
         await fs.writeFile(GALLERY_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs(); // Sync
 
         // Optionally delete the physical file too
         // const filePath = path.join(__dirname, src);
@@ -281,6 +312,7 @@ app.post('/api/background/times', checkAuth, async (req, res) => {
         };
 
         await fs.writeFile(BACKGROUNDS_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs(); // Sync
         res.json({ success: true, times: data.times });
     } catch (err) {
         res.status(500).json({ error: 'Failed to update times' });
@@ -317,6 +349,7 @@ app.post('/api/background', checkAuth, upload.single('image'), async (req, res) 
 
         data[timeSlot] = filePath;
         await fs.writeFile(BACKGROUNDS_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs(); // Sync
 
         res.json({ success: true, backgrounds: data });
     } catch (err) {
@@ -336,6 +369,7 @@ app.post('/api/background/reset', checkAuth, async (req, res) => {
 
         data[timeSlot] = defaults[timeSlot];
         await fs.writeFile(BACKGROUNDS_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs(); // Sync
 
         res.json({ success: true, backgrounds: data });
     } catch (err) {

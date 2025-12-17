@@ -114,16 +114,12 @@ document.addEventListener('DOMContentLoaded', function () {
         body.classList.add('aksam');
     }
 
-    // Fetch custom backgrounds
-    fetch('backgrounds.json')
-        .then(res => res.json())
-        .then(bgData => {
-            if (bgData && bgData[timeSlot]) {
-                console.log('Applying custom background:', bgData[timeSlot]);
-                body.style.backgroundImage = `url('${bgData[timeSlot]}')`;
-            }
-        })
-        .catch(err => console.error('Background fetch error:', err));
+    // Fetch from data.js
+    const bgData = window.LEMAR_BACKGROUNDS || {};
+    if (bgData && bgData[timeSlot]) {
+        // console.log('Applying custom background:', bgData[timeSlot]);
+        body.style.backgroundImage = `url('${bgData[timeSlot]}')`;
+    }
 
     // --- NAVIGATION LOGIC (Persistent) ---
     const navBar = document.getElementById('menu-nav-bar');
@@ -167,78 +163,77 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (menuSystem) {
-        fetch('menu.json')
-            .then(res => res.json())
-            .then(data => {
-                const items = data.items;
-                const categories = data.categories;
+        // Use data.js
+        const data = window.LEMAR_MENU || { items: [], categories: {} };
+        const items = data.items;
+        const categories = data.categories;
 
-                // Build Hierarchy
-                const hierarchy = {};
-                Object.keys(categories).forEach(catId => {
-                    if (catId === 'root') return;
-                    const cat = categories[catId];
-                    const parent = cat.parent || 'root';
-                    if (!hierarchy[parent]) hierarchy[parent] = [];
-                    hierarchy[parent].push(catId);
+        // Build Hierarchy
+        const hierarchy = {};
+        Object.keys(categories).forEach(catId => {
+            if (catId === 'root') return;
+            const cat = categories[catId];
+            const parent = cat.parent || 'root';
+            if (!hierarchy[parent]) hierarchy[parent] = [];
+            hierarchy[parent].push(catId);
+        });
+
+        // Helper: Get Parent ID for Navigation
+        const getParentPanelId = (id) => {
+            if (id === 'root') return null;
+            const cat = categories[id];
+            return cat ? (cat.parent || 'root') : 'root';
+        };
+
+        // --- RENDER MENU PANELS ---
+        Object.keys(categories).forEach(catId => {
+            const cat = categories[catId];
+            const panelItems = items.filter(i => i.category === catId);
+
+            const panel = document.createElement('div');
+            panel.className = 'menu-panel';
+            panel.id = `panel-${catId}`;
+            panel.dataset.panelId = catId;
+            if (catId === 'root') panel.classList.add('is-active');
+
+            panel.innerHTML = `<h2 class="panel-title">${cat.name}</h2>`;
+
+            // Sub-categories Buttons
+            // Use the pre-calculated hierarchy if available, or filter directly
+            const childrenIds = hierarchy[catId] || []; // Use the hierarchy we built above
+
+            if (childrenIds.length > 0) {
+                const navDiv = document.createElement('div');
+                navDiv.className = 'main-menu';
+
+                childrenIds.forEach(childId => {
+                    const child = categories[childId];
+                    const btn = document.createElement('button');
+                    btn.className = 'nav-button';
+                    btn.innerHTML = `<span>${child.name}</span>`;
+
+                    // Style
+                    if (child.size === 'large') btn.classList.add('large');
+                    btn.style.borderColor = child.color || '#FFC700';
+                    btn.style.color = child.color || '#FFC700';
+
+                    btn.addEventListener('click', () => {
+                        historyStack.push(childId);
+                        navigateTo(childId);
+                    });
+
+                    navDiv.appendChild(btn);
                 });
+                panel.appendChild(navDiv);
+            }
 
-                // Helper: Get Parent ID for Navigation
-                const getParentPanelId = (id) => {
-                    if (id === 'root') return null;
-                    const cat = categories[id];
-                    return cat ? (cat.parent || 'root') : 'root';
-                };
-
-                // --- RENDER MENU PANELS ---
-                Object.keys(categories).forEach(catId => {
-                    const cat = categories[catId];
-                    const panelItems = items.filter(i => i.category === catId);
-
-                    const panel = document.createElement('div');
-                    panel.className = 'menu-panel';
-                    panel.id = `panel-${catId}`;
-                    panel.dataset.panelId = catId;
-                    if (catId === 'root') panel.classList.add('is-active');
-
-                    panel.innerHTML = `<h2 class="panel-title">${cat.name}</h2>`;
-
-                    // Sub-categories Buttons
-                    // Use the pre-calculated hierarchy if available, or filter directly
-                    const childrenIds = hierarchy[catId] || []; // Use the hierarchy we built above
-
-                    if (childrenIds.length > 0) {
-                        const navDiv = document.createElement('div');
-                        navDiv.className = 'main-menu';
-
-                        childrenIds.forEach(childId => {
-                            const child = categories[childId];
-                            const btn = document.createElement('button');
-                            btn.className = 'nav-button';
-                            btn.innerHTML = `<span>${child.name}</span>`;
-
-                            // Style
-                            if (child.size === 'large') btn.classList.add('large');
-                            btn.style.borderColor = child.color || '#FFC700';
-                            btn.style.color = child.color || '#FFC700';
-
-                            btn.addEventListener('click', () => {
-                                historyStack.push(childId);
-                                navigateTo(childId);
-                            });
-
-                            navDiv.appendChild(btn);
-                        });
-                        panel.appendChild(navDiv);
-                    }
-
-                    // Items
-                    if (panelItems.length > 0) {
-                        panel.classList.add('menu-item-list');
-                        panelItems.forEach(item => {
-                            const itemDiv = document.createElement('div');
-                            itemDiv.className = 'menu-item';
-                            itemDiv.innerHTML = `
+            // Items
+            if (panelItems.length > 0) {
+                panel.classList.add('menu-item-list');
+                panelItems.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'menu-item';
+                    itemDiv.innerHTML = `
                                 <div class="menu-item-header">
                                     <span class="menu-item-name">${item.name}</span>
                                     <span class="menu-item-dots"></span>
@@ -246,70 +241,67 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </div>
                                 ${item.description ? `<div class="menu-item-description">${item.description}</div>` : ''}
                             `;
-                            panel.appendChild(itemDiv);
-                        });
-                    }
-
-                    menuSystem.appendChild(panel);
+                    panel.appendChild(itemDiv);
                 });
+            }
 
-                // --- SEARCH LOGIC (Injected) ---
-                const searchInput = document.getElementById('search-input');
-                if (searchInput) {
-                    searchInput.addEventListener('input', (e) => {
-                        const query = e.target.value.toLowerCase().trim();
+            menuSystem.appendChild(panel);
+        });
 
-                        // Remove existing search panel if any
-                        const oldSearch = document.getElementById('panel-search-results');
-                        if (oldSearch) oldSearch.remove();
+        // --- SEARCH LOGIC (Injected) ---
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
 
-                        if (query.length === 0) {
-                            // Clear search -> Go to root
-                            navigateTo('root');
-                            // Hide nav bar if on root (handled by navigateTo)
-                            return;
-                        }
+                // Remove existing search panel if any
+                const oldSearch = document.getElementById('panel-search-results');
+                if (oldSearch) oldSearch.remove();
 
-                        // Filter Items
-                        const results = items.filter(item =>
-                            item.name.toLowerCase().includes(query) ||
-                            (item.description && item.description.toLowerCase().includes(query))
-                        );
+                if (query.length === 0) {
+                    // Clear search -> Go to root
+                    navigateTo('root');
+                    // Hide nav bar if on root (handled by navigateTo)
+                    return;
+                }
 
-                        // Create Search Panel
-                        const searchPanel = document.createElement('div');
-                        searchPanel.id = 'panel-search-results'; // ID for navigation
-                        searchPanel.className = 'menu-panel';
-                        searchPanel.dataset.panelId = 'search-results';
+                // Filter Items
+                const results = items.filter(item =>
+                    item.name.toLowerCase().includes(query) ||
+                    (item.description && item.description.toLowerCase().includes(query))
+                );
 
-                        searchPanel.innerHTML = `<h2 class="panel-title">Arama Sonuçları</h2>`;
+                // Create Search Panel
+                const searchPanel = document.createElement('div');
+                searchPanel.id = 'panel-search-results'; // ID for navigation
+                searchPanel.className = 'menu-panel';
+                searchPanel.dataset.panelId = 'search-results';
 
-                        if (results.length > 0) {
-                            searchPanel.classList.add('menu-item-list');
-                            results.forEach(item => {
-                                const itemDiv = document.createElement('div');
-                                itemDiv.className = 'menu-item';
-                                itemDiv.innerHTML = `
+                searchPanel.innerHTML = `<h2 class="panel-title">Arama Sonuçları</h2>`;
+
+                if (results.length > 0) {
+                    searchPanel.classList.add('menu-item-list');
+                    results.forEach(item => {
+                        const itemDiv = document.createElement('div');
+                        itemDiv.className = 'menu-item';
+                        itemDiv.innerHTML = `
                                     <div class="menu-item-header">
                                         <span class="menu-item-name">${item.name}</span>
                                         <span class="menu-item-price">${item.price}</span>
                                     </div>
                                     ${item.description ? `<div class="menu-item-description">${item.description}</div>` : ''}
                                 `;
-                                searchPanel.appendChild(itemDiv);
-                            });
-                        } else {
-                            searchPanel.innerHTML += `<p style="text-align:center; color:white;">Sonuç bulunamadı.</p>`;
-                        }
-
-                        menuSystem.appendChild(searchPanel);
-
-                        // Navigate to it
-                        navigateTo('search-results');
+                        searchPanel.appendChild(itemDiv);
                     });
+                } else {
+                    searchPanel.innerHTML += `<p style="text-align:center; color:white;">Sonuç bulunamadı.</p>`;
                 }
-            })
-            .catch(err => console.error('Error loading menu:', err));
+
+                menuSystem.appendChild(searchPanel);
+
+                // Navigate to it
+                navigateTo('search-results');
+            });
+        }
     }
 
     // Old navigateTo removed
@@ -329,25 +321,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (galleryGrid) {
-        fetch('gallery.json')
-            .then(res => res.json())
-            .then(data => {
-                const images = data.images || [];
-                const filteredImages = images.filter(image => image.times.includes(currentTimeOfDay));
+        // Use data.js
+        const data = window.LEMAR_GALLERY || { images: [] };
+        const images = data.images || [];
+        const filteredImages = images.filter(image => image.times.includes(currentTimeOfDay));
 
-                filteredImages.forEach(image => {
-                    const galleryItem = document.createElement('div');
-                    galleryItem.classList.add('gallery-item');
+        filteredImages.forEach(image => {
+            const galleryItem = document.createElement('div');
+            galleryItem.classList.add('gallery-item');
 
-                    const img = document.createElement('img');
-                    img.src = image.src; // src is now relative like "uploads/..." or "filename.jpg"
-                    img.alt = "Lemar Bistro Gallery Image";
+            const img = document.createElement('img');
+            img.src = image.src; // src is now relative like "uploads/..." or "filename.jpg"
+            img.alt = "Lemar Bistro Gallery Image";
 
-                    galleryItem.appendChild(img);
-                    galleryGrid.appendChild(galleryItem);
-                });
-            })
-            .catch(err => console.error('Error loading gallery:', err));
+            galleryItem.appendChild(img);
+            galleryGrid.appendChild(galleryItem);
+        });
     }
 
 
