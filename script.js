@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Fetch custom backgrounds
-    fetch('/api/backgrounds')
+    fetch('backgrounds.json')
         .then(res => res.json())
         .then(bgData => {
             if (bgData && bgData[timeSlot]) {
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (menuSystem) {
-        fetch('/api/menu')
+        fetch('menu.json')
             .then(res => res.json())
             .then(data => {
                 const items = data.items;
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (galleryGrid) {
-        fetch('/api/gallery')
+        fetch('gallery.json')
             .then(res => res.json())
             .then(data => {
                 const images = data.images || [];

@@ -18,7 +18,7 @@ call git branch -M main
 
 echo 5. Uzak sunucu baglaniyor (https://github.com/pyroid-tuberz/coffe.git)...
 call git remote remove origin 2>nul
-call git remote add origin https://github.com/pyroid-tuberz/coffe.git
+call git remote add origin https://github.com/pyroid-tuberz/lemar.bistro.git
 
 echo.
 echo ==========================================
