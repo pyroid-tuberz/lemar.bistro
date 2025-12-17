@@ -26,7 +26,7 @@ echo HAZIR! Simdi yukleme baslayacak.
 echo Lutfen acilan pencerede GitHub girisi yapin.
 echo ==========================================
 echo.
-call git push -u origin main
+call git push -u origin main --force
 
 echo.
 echo Islem tamamlandi. Bir hata varsa yukarida yazacaktir.
