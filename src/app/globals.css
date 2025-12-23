@@ -985,3 +985,70 @@ img {
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.9rem;
 }
+
+/* --- ARTIST MOBILE DROPDOWN --- */
+@media (max-width: 768px) {
+  .artist-tabs-container {
+    flex-direction: column;
+    gap: 0;
+    background: #1e1e1e;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    margin: 0 10px 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+  }
+
+  .artist-day-tab {
+    width: 100%;
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: none !important;
+    /* Force hide by default */
+    text-align: left;
+    padding: 15px 20px;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    background: transparent;
+  }
+
+  /* Active is acts as the 'Header' of the dropdown */
+  .artist-day-tab.active {
+    display: flex !important;
+    background: rgba(255, 199, 0, 0.1);
+    color: #FFC700;
+    order: -1;
+    /* Always stays at top */
+  }
+
+  /* When open, show all tabs */
+  .artist-tabs-container.dropdown-open .artist-day-tab {
+    display: flex !important;
+  }
+
+  .artist-tabs-container.dropdown-open .artist-day-tab.active {
+    background: rgba(255, 199, 0, 0.2);
+    border-bottom: 2px solid #FFC700;
+  }
+
+  /* Dropdown Arrow Indicator */
+  .artist-day-tab.active::after {
+    content: '▼';
+    font-size: 0.8rem;
+    margin-left: 10px;
+    transition: transform 0.3s ease;
+  }
+
+  .artist-tabs-container.dropdown-open .artist-day-tab.active::after {
+    transform: rotate(180deg);
+  }
+
+  .tab-today-badge {
+    margin-left: auto;
+    margin-right: 15px;
+  }
+}

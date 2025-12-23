@@ -403,7 +403,23 @@ function initApp() {
                     ${index === todayDayIndex ? '<div class="tab-today-badge">Bugün</div>' : ''}
                 `;
 
-                tabBtn.onclick = () => showArtistDay(index, weekData, tabContainer.children);
+                tabBtn.onclick = (e) => {
+                    // Mobile Dropdown Logic
+                    if (window.innerWidth <= 768) {
+                        e.stopPropagation();
+                        if (tabBtn.classList.contains('active')) {
+                            // If clicking the active one, toggle the list
+                            tabContainer.classList.toggle('dropdown-open');
+                        } else {
+                            // If clicking another, select it and close list
+                            showArtistDay(index, weekData, tabContainer.children);
+                            tabContainer.classList.remove('dropdown-open');
+                        }
+                    } else {
+                        // Desktop: Just select
+                        showArtistDay(index, weekData, tabContainer.children);
+                    }
+                };
 
                 if (index === todayDayIndex) {
                     tabBtn.classList.add('active');
