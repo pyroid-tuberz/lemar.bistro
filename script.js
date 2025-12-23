@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- LANGUAGE SYSTEM ---
     const translations = {
         tr: {
-            nav_menu: "Menü",
+            nav_featured: "Öne Çıkanlar",
             nav_gallery: "Galeri",
             nav_contact: "İletişim",
             nav_about: "Hakkımızda",
@@ -31,13 +31,14 @@ document.addEventListener('DOMContentLoaded', function () {
             btn_back: "← Geri",
             btn_home: "⌂ Ana Menü",
             gallery_title: "Lezzetlerimizden Kareler",
+            artists_title: "Sanatçılar",
             contact_title: "Bize Ulaşın",
             address_title: "Adres",
             phone_title: "Telefon",
             footer_rights: "© 2025 Lemar Bistro. Tüm Hakları Saklıdır."
         },
         en: {
-            nav_menu: "Menu",
+            nav_featured: "Featured",
             nav_gallery: "Gallery",
             nav_contact: "Contact",
             nav_about: "About",
@@ -49,6 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
             btn_back: "← Back",
             btn_home: "⌂ Home",
             gallery_title: "Taste Gallery",
+            artists_title: "Artists",
             contact_title: "Contact Us",
             address_title: "Address",
             phone_title: "Phone",
@@ -114,19 +116,21 @@ document.addEventListener('DOMContentLoaded', function () {
         body.classList.add('aksam');
     }
 
-    // Fetch from data.js
-    const bgData = window.LEMAR_BACKGROUNDS || {};
-    if (bgData && bgData[timeSlot]) {
-        // console.log('Applying custom background:', bgData[timeSlot]);
-        body.style.backgroundImage = `url('${bgData[timeSlot]}')`;
-    }
+    // Fetch from backgrounds.json
+    fetch('backgrounds.json')
+        .then(res => res.json())
+        .then(bgData => {
+            if (bgData && bgData[timeSlot]) {
+                body.style.backgroundImage = `url('${bgData[timeSlot]}')`;
+            }
+        })
+        .catch(err => console.error('Background fetch error:', err));
 
     // --- NAVIGATION LOGIC (Persistent) ---
     const navBar = document.getElementById('menu-nav-bar');
     const btnBack = document.getElementById('btn-back');
     const btnHome = document.getElementById('btn-home');
 
-    // Check if elements exist to avoid errors
     if (btnBack && btnHome) {
         btnBack.addEventListener('click', () => {
             if (historyStack.length > 1) {
@@ -143,7 +147,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function navigateTo(panelId) {
-        // Show/Hide Nav Bar
+        if (!panelId) return;
+
+        if (historyStack[historyStack.length - 1] !== panelId) {
+            historyStack.push(panelId);
+        }
+
         if (navBar) {
             if (panelId === 'root') {
                 navBar.style.display = 'none';
@@ -163,231 +172,326 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (menuSystem) {
-        // Use data.js
-        const data = window.LEMAR_MENU || { items: [], categories: {} };
-        const items = data.items;
-        const categories = data.categories;
+        fetch('menu.json')
+            .then(res => res.json())
+            .then(data => {
+                const items = data.items;
+                const categories = data.categories;
 
-        // Build Hierarchy
-        const hierarchy = {};
-        Object.keys(categories).forEach(catId => {
-            if (catId === 'root') return;
-            const cat = categories[catId];
-            const parent = cat.parent || 'root';
-            if (!hierarchy[parent]) hierarchy[parent] = [];
-            hierarchy[parent].push(catId);
-        });
-
-        // Helper: Get Parent ID for Navigation
-        const getParentPanelId = (id) => {
-            if (id === 'root') return null;
-            const cat = categories[id];
-            return cat ? (cat.parent || 'root') : 'root';
-        };
-
-        // --- RENDER MENU PANELS ---
-        Object.keys(categories).forEach(catId => {
-            const cat = categories[catId];
-            const panelItems = items.filter(i => i.category === catId);
-
-            const panel = document.createElement('div');
-            panel.className = 'menu-panel';
-            panel.id = `panel-${catId}`;
-            panel.dataset.panelId = catId;
-            if (catId === 'root') panel.classList.add('is-active');
-
-            panel.innerHTML = `<h2 class="panel-title">${cat.name}</h2>`;
-
-            // Sub-categories Buttons
-            // Use the pre-calculated hierarchy if available, or filter directly
-            const childrenIds = hierarchy[catId] || []; // Use the hierarchy we built above
-
-            if (childrenIds.length > 0) {
-                const navDiv = document.createElement('div');
-                navDiv.className = 'main-menu';
-
-                childrenIds.forEach(childId => {
-                    const child = categories[childId];
-                    const btn = document.createElement('button');
-                    btn.className = 'nav-button';
-                    btn.innerHTML = `<span>${child.name}</span>`;
-
-                    // Style
-                    if (child.size === 'large') btn.classList.add('large');
-                    btn.style.borderColor = child.color || '#FFC700';
-                    btn.style.color = child.color || '#FFC700';
-
-                    btn.addEventListener('click', () => {
-                        historyStack.push(childId);
-                        navigateTo(childId);
-                    });
-
-                    navDiv.appendChild(btn);
+                const hierarchy = {};
+                Object.keys(categories).forEach(catId => {
+                    if (catId === 'root') return;
+                    const cat = categories[catId];
+                    const parent = cat.parent || 'root';
+                    if (!hierarchy[parent]) hierarchy[parent] = [];
+                    hierarchy[parent].push(catId);
                 });
-                panel.appendChild(navDiv);
-            }
 
-            // Items
-            if (panelItems.length > 0) {
-                panel.classList.add('menu-item-list');
-                panelItems.forEach(item => {
-                    const itemDiv = document.createElement('div');
-                    itemDiv.className = 'menu-item';
-                    itemDiv.innerHTML = `
+                Object.keys(categories).forEach(catId => {
+                    const cat = categories[catId];
+                    const panelItems = items.filter(i => i.category === catId);
+
+                    const panel = document.createElement('div');
+                    panel.className = 'menu-panel';
+                    panel.id = `panel-${catId}`;
+                    panel.dataset.panelId = catId;
+                    if (catId === 'root') panel.classList.add('is-active');
+
+                    panel.innerHTML = `<h2 class="panel-title">${cat.name}</h2>`;
+
+                    if (hierarchy[catId]) {
+                        const subCatGrid = document.createElement('div');
+                        subCatGrid.className = 'main-menu';
+                        hierarchy[catId].forEach(subId => {
+                            const subCat = categories[subId];
+                            const btn = document.createElement('button');
+                            btn.className = 'nav-button';
+                            btn.style.borderColor = subCat.color || '#FFC700';
+                            btn.style.color = subCat.color || '#FFC700';
+                            btn.innerHTML = `<span>${subCat.name}</span>`;
+                            btn.onclick = () => navigateTo(subId);
+                            subCatGrid.appendChild(btn);
+                        });
+                        panel.appendChild(subCatGrid);
+                    }
+
+                    if (panelItems.length > 0) {
+                        panel.classList.add('menu-item-list');
+                        panelItems.forEach(item => {
+                            const itemDiv = document.createElement('div');
+                            itemDiv.className = 'menu-item';
+                            itemDiv.innerHTML = `
                                 <div class="menu-item-header">
                                     <span class="menu-item-name">${item.name}</span>
-                                    <span class="menu-item-dots"></span>
                                     <span class="menu-item-price">${item.price}</span>
                                 </div>
                                 ${item.description ? `<div class="menu-item-description">${item.description}</div>` : ''}
                             `;
-                    panel.appendChild(itemDiv);
+                            panel.appendChild(itemDiv);
+                        });
+                    }
+                    menuSystem.appendChild(panel);
                 });
-            }
 
-            menuSystem.appendChild(panel);
-        });
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        const query = e.target.value.toLowerCase().trim();
+                        const oldSearch = document.getElementById('panel-search-results');
+                        if (oldSearch) oldSearch.remove();
 
-        // --- SEARCH LOGIC (Injected) ---
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase().trim();
+                        if (query.length === 0) {
+                            navigateTo('root');
+                            return;
+                        }
 
-                // Remove existing search panel if any
-                const oldSearch = document.getElementById('panel-search-results');
-                if (oldSearch) oldSearch.remove();
+                        const results = items.filter(item =>
+                            item.name.toLowerCase().includes(query) ||
+                            (item.description && item.description.toLowerCase().includes(query))
+                        );
 
-                if (query.length === 0) {
-                    // Clear search -> Go to root
-                    navigateTo('root');
-                    // Hide nav bar if on root (handled by navigateTo)
-                    return;
-                }
+                        const searchPanel = document.createElement('div');
+                        searchPanel.id = 'panel-search-results';
+                        searchPanel.className = 'menu-panel';
+                        searchPanel.dataset.panelId = 'search-results';
+                        searchPanel.innerHTML = `<h2 class="panel-title">Arama Sonuçları</h2>`;
 
-                // Filter Items
-                const results = items.filter(item =>
-                    item.name.toLowerCase().includes(query) ||
-                    (item.description && item.description.toLowerCase().includes(query))
-                );
-
-                // Create Search Panel
-                const searchPanel = document.createElement('div');
-                searchPanel.id = 'panel-search-results'; // ID for navigation
-                searchPanel.className = 'menu-panel';
-                searchPanel.dataset.panelId = 'search-results';
-
-                searchPanel.innerHTML = `<h2 class="panel-title">Arama Sonuçları</h2>`;
-
-                if (results.length > 0) {
-                    searchPanel.classList.add('menu-item-list');
-                    results.forEach(item => {
-                        const itemDiv = document.createElement('div');
-                        itemDiv.className = 'menu-item';
-                        itemDiv.innerHTML = `
+                        if (results.length > 0) {
+                            searchPanel.classList.add('menu-item-list');
+                            results.forEach(item => {
+                                const itemDiv = document.createElement('div');
+                                itemDiv.className = 'menu-item';
+                                itemDiv.innerHTML = `
                                     <div class="menu-item-header">
                                         <span class="menu-item-name">${item.name}</span>
                                         <span class="menu-item-price">${item.price}</span>
                                     </div>
                                     ${item.description ? `<div class="menu-item-description">${item.description}</div>` : ''}
                                 `;
-                        searchPanel.appendChild(itemDiv);
+                                searchPanel.appendChild(itemDiv);
+                            });
+                        } else {
+                            searchPanel.innerHTML += `<p style="text-align:center; color:white;">Sonuç bulunamadı.</p>`;
+                        }
+                        menuSystem.appendChild(searchPanel);
+                        navigateTo('search-results');
                     });
-                } else {
-                    searchPanel.innerHTML += `<p style="text-align:center; color:white;">Sonuç bulunamadı.</p>`;
                 }
-
-                menuSystem.appendChild(searchPanel);
-
-                // Navigate to it
-                navigateTo('search-results');
-            });
-        }
+            })
+            .catch(err => console.error('Error loading menu:', err));
     }
-
-    // Old navigateTo removed
-
-
 
     // --- Gallery Image Loader ---
     const galleryGrid = document.querySelector('.gallery-grid');
-
-    // Determine time of day based on body class
     const bodyClass = body.className;
-    let currentTimeOfDay = 'aksam'; // default
-    if (bodyClass.includes('sabah')) {
-        currentTimeOfDay = 'sabah';
-    } else if (bodyClass.includes('oglen')) {
-        currentTimeOfDay = 'oglen';
-    }
+    let currentTimeOfDay = 'aksam';
+    if (bodyClass.includes('sabah')) currentTimeOfDay = 'sabah';
+    else if (bodyClass.includes('oglen')) currentTimeOfDay = 'oglen';
 
     if (galleryGrid) {
-        // Use data.js
-        const data = window.LEMAR_GALLERY || { images: [] };
-        const images = data.images || [];
-        const filteredImages = images.filter(image => image.times.includes(currentTimeOfDay));
+        fetch('gallery.json')
+            .then(res => res.json())
+            .then(data => {
+                const images = data.images || [];
+                const filteredImages = images.filter(image => image.times.includes(currentTimeOfDay));
+                filteredImages.forEach(image => {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.classList.add('gallery-item');
+                    const img = document.createElement('img');
+                    img.src = image.src;
+                    img.alt = "Lemar Bistro Gallery Image";
+                    img.loading = "lazy";
+                    galleryItem.appendChild(img);
+                    galleryGrid.appendChild(galleryItem);
+                });
+            })
+            .catch(err => console.error('Error loading gallery:', err));
+    }
 
-        filteredImages.forEach(image => {
-            const galleryItem = document.createElement('div');
-            galleryItem.classList.add('gallery-item');
+    // --- Scroll Animation (IntersectionObserver) ---
+    const scrollObserverValue = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                // Optional: stop observing once visible
+                // scrollObserverValue.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.15 // Trigger when 15% of element is visible
+    });
 
-            const img = document.createElement('img');
-            img.src = image.src; // src is now relative like "uploads/..." or "filename.jpg"
-            img.alt = "Lemar Bistro Gallery Image";
-
-            galleryItem.appendChild(img);
-            galleryGrid.appendChild(galleryItem);
+    function initScrollAnimations() {
+        if (window.innerWidth <= 768) return;
+        document.querySelectorAll('.scroll-animate').forEach((el) => {
+            scrollObserverValue.observe(el);
         });
     }
 
-
-    // --- Scroll Animation ---
-    const scrollElements = document.querySelectorAll('.scroll-animate');
-
-    const elementInView = (el, dividend = 1) => {
-        const elementTop = el.getBoundingClientRect().top;
-        return (
-            elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
-        );
-    };
-
-    const displayScrollElement = (element) => {
-        element.classList.add('visible');
-    };
-
-    const hideScrollElement = (element) => {
-        element.classList.remove('visible');
-    }
-
-    const handleScrollAnimation = () => {
-        scrollElements.forEach((el) => {
-            if (elementInView(el, 1.25)) {
-                displayScrollElement(el);
-            }
-        })
-    }
-
-    window.addEventListener('scroll', () => {
-        handleScrollAnimation();
-    });
-
-    handleScrollAnimation();
+    initScrollAnimations();
 
     // Snowflake effect
     function createSnow() {
         const snow = document.createElement("div");
         snow.classList.add("snowflake");
-
         snow.style.left = Math.random() * window.innerWidth + "px";
         snow.style.opacity = Math.random();
         snow.style.animationDuration = (Math.random() * 3 + 2) + "s";
-
         document.body.appendChild(snow);
+        setTimeout(() => { snow.remove(); }, 5000);
+    }
+    if (window.innerWidth > 768) setInterval(createSnow, 150);
 
-        setTimeout(() => {
-            snow.remove();
-        }, 5000);
+
+    // --- Sanatçılar (Artists) Loader - Weekly Schedule with Tabs ---
+    async function loadArtists() {
+        const artistGrid = document.getElementById('artist-display-grid');
+        if (!artistGrid) return;
+
+        try {
+            const res = await fetch('/api/artists');
+            const weekData = await res.json();
+
+            artistGrid.innerHTML = '';
+
+            // Create tab buttons container
+            const tabContainer = document.createElement('div');
+            tabContainer.className = 'artist-tabs-container';
+
+            // Create content container
+            const contentContainer = document.createElement('div');
+            contentContainer.id = 'artist-content-container';
+
+            // Get today's day index (0 = Pazartesi, 6 = Pazar)
+            const today = new Date();
+            const todayDayIndex = (today.getDay() + 6) % 7; // Convert Sunday=0 to Monday=0
+
+            weekData.forEach((day, index) => {
+                // Create tab button
+                const tabBtn = document.createElement('button');
+                tabBtn.className = 'artist-day-tab';
+                tabBtn.innerHTML = `
+                    <div class="tab-day-name">${day.dayName}</div>
+                    ${index === todayDayIndex ? '<div class="tab-today-badge">Bugün</div>' : ''}
+                `;
+
+                tabBtn.onclick = () => showArtistDay(index, weekData, tabContainer.children);
+
+                // Auto-select today
+                if (index === todayDayIndex) {
+                    tabBtn.classList.add('active');
+                }
+
+                tabContainer.appendChild(tabBtn);
+            });
+
+            artistGrid.appendChild(tabContainer);
+            artistGrid.appendChild(contentContainer);
+
+            // Show today by default
+            showArtistDay(todayDayIndex, weekData, tabContainer.children);
+
+        } catch (err) {
+            console.error('Error loading artists:', err);
+        }
     }
 
-    setInterval(createSnow, 150);
+    function showArtistDay(dayIndex, weekData, tabButtons) {
+        const contentContainer = document.getElementById('artist-content-container');
+        const day = weekData[dayIndex];
 
+        // Update tab button styles
+        Array.from(tabButtons).forEach((btn, idx) => {
+            if (idx === dayIndex) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // Clear and create content for selected day
+        contentContainer.innerHTML = '';
+
+        const dayContent = document.createElement('div');
+        dayContent.className = 'artists-day-content';
+
+        // Artist 1 Card
+        const artist1Card = createArtistCard(day.artist1, 'Sahne 1', '#FF6B6B');
+        dayContent.appendChild(artist1Card);
+
+        // Artist 2 Card
+        const artist2Card = createArtistCard(day.artist2, 'Sahne 2', '#4ECDC4');
+        dayContent.appendChild(artist2Card);
+
+        contentContainer.appendChild(dayContent);
+    }
+
+    function createArtistCard(artist, stageName, color) {
+        const card = document.createElement('div');
+        card.className = 'artist-card';
+        card.innerHTML = `
+            <div class="artist-card-header" style="background: linear-gradient(135deg, ${color}20 0%, ${color}05 100%); border-bottom: 2px solid ${color}40;">
+                <span class="artist-stage-badge" style="background: ${color}; color: white;">🎤 ${stageName}</span>
+            </div>
+            <div class="artist-card-body">
+                <div class="artist-avatar-container">
+                    <img src="${artist.image}" alt="${artist.name}" class="artist-avatar" style="border: 4px solid ${color}60;" onerror="this.src='uploads/default_artist.png'">
+                </div>
+                <h3 class="artist-name">${artist.name}</h3>
+                <p class="artist-venue">@ Lemar Bistro</p>
+            </div>
+        `;
+        return card;
+    }
+
+    loadArtists();
+
+    // --- Testimonials Loader ---
+    async function loadTestimonials() {
+        const testimonialGrid = document.getElementById('testimonial-display-grid');
+        if (!testimonialGrid) return;
+
+        try {
+            const res = await fetch('/api/testimonials');
+            const data = await res.json();
+
+            testimonialGrid.innerHTML = '';
+
+            data.forEach(t => {
+                const card = document.createElement('div');
+                card.className = 'testimonial-card scroll-animate';
+                card.innerHTML = `
+                    <p>"${t.text}"</p>
+                    <div class="testimonial-author">- ${t.name}</div>
+                `;
+                testimonialGrid.appendChild(card);
+
+                if (window.innerWidth > 768) {
+                    scrollObserverValue.observe(card);
+                }
+            });
+        } catch (err) {
+            console.error('Error loading testimonials:', err);
+        }
+    }
+    loadTestimonials();
+
+    // --- SCROLL TO TOP LOGIC ---
+    const scrollToTopBtn = document.getElementById('scroll-to-top');
+    if (scrollToTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 50) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
 });

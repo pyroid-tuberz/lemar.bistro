@@ -35,9 +35,27 @@ body {
 
 .header h1 {
     font-family: 'Dancing Script', cursive;
-    font-size: 6rem;
+    font-size: clamp(3rem, 15vw, 7rem);
     margin: 0;
     font-weight: 700;
+    background: linear-gradient(45deg, #fff, #FFC700, #fff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+    animation: titleFloat 4s ease-in-out infinite;
+}
+
+@keyframes titleFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 .menu-button {
@@ -87,6 +105,45 @@ body {
 
 .main-nav a:hover {
     color: #FFC700;
+}
+
+@media (max-width: 768px) {
+
+    .nav-links {
+        display: none;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(18, 18, 18, 0.95);
+        backdrop-filter: blur(15px);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .nav-links.is-open {
+        display: flex;
+    }
+
+    .nav-links a {
+        margin: 15px 0;
+        font-size: 1.5rem;
+    }
+
+    .main-nav {
+        background: transparent;
+    }
+
+    .hamburger {
+        display: block !important;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 1001;
+    }
 }
 
 .hamburger {
@@ -152,6 +209,26 @@ body {
     transform: translateY(0);
 }
 
+/* Subtle micro-interactions */
+.nav-links a {
+    position: relative;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #FFC700;
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
 
 #menu-section {
     padding: 80px 20px;
@@ -175,7 +252,22 @@ body {
     padding: 25px;
     max-width: 1200px;
     margin: 0 auto;
-    /* Center the grid */
+}
+
+@media (max-width: 992px) {
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
+    }
 }
 
 .gallery-item img {
@@ -186,6 +278,18 @@ body {
     object-fit: cover;
     transition: transform 0.3s ease;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+    .gallery-item img {
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .gallery-item img {
+        height: 250px;
+    }
 }
 
 .gallery-item:hover img {
@@ -630,5 +734,413 @@ img {
 
     .contact-container {
         flex-direction: column;
+    }
+
+    .scroll-animate {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    body {
+        transition: none !important;
+    }
+
+    .content-section,
+    .menu-system {
+        backdrop-filter: none !important;
+        background-color: rgba(18, 18, 18, 0.98) !important;
+    }
+
+    .header {
+        min-height: 100vh;
+        min-height: 100svh;
+    }
+
+    .header h1 {
+        font-size: clamp(2.5rem, 15vw, 4rem);
+        animation: none !important;
+        /* Disable floating animation */
+        filter: none !important;
+    }
+
+    /* Performance optimization: Disable all transitions and animations */
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+        transition-duration: 0s !important;
+        backdrop-filter: none !important;
+    }
+
+    .nav-links {
+        /* Maintain background but remove blur */
+        backdrop-filter: none !important;
+        background: rgba(18, 18, 18, 0.98);
+    }
+}
+
+/* --- FEATURED SECTION --- */
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.featured-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+}
+
+.featured-card:hover {
+    transform: translateY(-10px);
+    border-color: #FFC700;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+}
+
+.featured-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.featured-info {
+    padding: 25px;
+}
+
+.featured-info h3 {
+    color: #FFC700;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.featured-info p {
+    font-size: 0.95rem;
+    color: rgba(234, 234, 234, 0.7);
+    margin-bottom: 15px;
+}
+
+.featured-info .price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+/* --- ARTIST SECTION --- */
+.artist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+    .artist-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+}
+
+.artist-card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.artist-card:hover {
+    border-color: rgba(255, 199, 0, 0.3);
+    transform: translateY(-5px);
+}
+
+.artist-image {
+    position: relative;
+    height: 450px;
+}
+
+.artist-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.artist-day {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #FFC700;
+    color: #121212;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    z-index: 2;
+}
+
+.artist-content {
+    padding: 25px;
+    text-align: center;
+}
+
+.artist-content h3 {
+    font-size: 1.6rem;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.artist-content p {
+    color: rgba(255, 199, 0, 0.8);
+    margin-bottom: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* --- TESTIMONIALS --- */
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.testimonial-card {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 35px;
+    border-radius: 20px;
+    font-style: italic;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.testimonial-author {
+    margin-top: 20px;
+    color: #FFC700;
+    font-weight: 600;
+    font-style: normal;
+}
+
+@media (max-width: 768px) {
+    .artist-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- STICKY BUBBLE BUTTON (SCROLL TO TOP) --- */
+#scroll-to-top {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #FFC700, #FFAA00);
+    color: #121212;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(255, 199, 0, 0.4);
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: scale(0.5);
+}
+
+#scroll-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+#scroll-to-top:hover {
+    background: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 15px 35px rgba(255, 255, 255, 0.3);
+}
+
+#scroll-to-top svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 3;
+}
+
+@media (max-width: 768px) {
+    #scroll-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+        transition: opacity 0.3s ease, transform 0.3s ease !important;
+    }
+}
+
+/* --- Artist Day Tab Buttons --- */
+.artist-day-tab:hover {
+    background: rgba(255, 199, 0, 0.2) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 199, 0, 0.3);
+}
+
+@media (max-width: 768px) {
+    .artist-day-tab {
+        font-size: 0.85rem !important;
+        padding: 10px 15px !important;
+    }
+}
+
+/* ===== ARTISTS SECTION MODERN STYLES ===== */
+.artist-tabs-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+.artist-day-tab {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.artist-day-tab:hover {
+    background: rgba(255, 199, 0, 0.1);
+    border-color: rgba(255, 199, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+.artist-day-tab.active {
+    background: linear-gradient(135deg, #FFC700 0%, #FFD700 100%);
+    border-color: #FFC700;
+    box-shadow: 0 4px 15px rgba(255, 199, 0, 0.4);
+}
+
+.tab-day-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #EAEAEA;
+    margin-bottom: 4px;
+}
+
+.artist-day-tab.active .tab-day-name {
+    color: #1A1A1A;
+}
+
+.tab-today-badge {
+    font-size: 0.75rem;
+    color: #FFC700;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.artist-day-tab.active .tab-today-badge {
+    color: #1A1A1A;
+}
+
+.artists-day-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.artist-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.artist-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 199, 0, 0.3);
+}
+
+.artist-card-header {
+    padding: 15px 20px;
+    text-align: center;
+}
+
+.artist-stage-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.artist-card-body {
+    padding: 30px 20px;
+    text-align: center;
+}
+
+.artist-avatar-container {
+    margin-bottom: 20px;
+}
+
+.artist-avatar {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.artist-card:hover .artist-avatar {
+    transform: scale(1.05);
+}
+
+.artist-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0 0 8px 0;
+    font-family: 'Playfair Display', serif;
+}
+
+.artist-venue {
+    font-size: 0.95rem;
+    color: rgba(255, 199, 0, 0.8);
+    margin: 0;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .artist-tabs-container {
+        gap: 8px;
+    }
+
+    .artist-day-tab {
+        font-size: 0.85rem;
+        padding: 10px 15px;
+    }
+
+    .artists-day-content {
+        grid-template-columns: 1fr;
+    }
+
+    .artist-avatar {
+        width: 140px;
+        height: 140px;
     }
 }

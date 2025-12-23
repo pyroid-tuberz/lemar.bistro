@@ -27,7 +27,9 @@
                 <span class="hamburger-bar"></span>
             </button>
             <div class="nav-links">
+                <a href="#featured-section" data-key="nav_featured">Öne Çıkanlar</a>
                 <a href="#menu-section" data-key="nav_menu">Menü</a>
+                <a href="#artists-section" data-key="nav_artists">Sanatçılar</a>
                 <a href="#gallery-section" data-key="nav_gallery">Galeri</a>
                 <a href="#contact-section" data-key="nav_contact">İletişim</a>
                 <a href="#about-section" data-key="nav_about">Hakkımızda</a>
@@ -47,6 +49,10 @@
             </p>
         </div>
     </section>
+
+    <div class="section-divider"></div>
+
+
 
     <div class="section-divider"></div>
 
@@ -71,10 +77,32 @@
 
     <div class="section-divider"></div>
 
+    <section id="artists-section" class="content-section scroll-animate">
+        <div class="section-container">
+            <h2 class="section-title" data-key="artists_title">Sanatçılar</h2>
+            <div class="artist-grid" id="artist-display-grid">
+                <!-- Dynamically loaded from server -->
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
     <section id="gallery-section" class="content-section scroll-animate">
         <div class="section-container">
             <h2 class="section-title" data-key="gallery_title">Lezzetlerimizden Kareler</h2>
             <div class="gallery-grid">
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <section id="testimonial-section" class="content-section scroll-animate">
+        <div class="section-container">
+            <h2 class="section-title">Misafirlerimiz Ne Diyor?</h2>
+            <div class="testimonial-grid" id="testimonial-display-grid">
+                <!-- Dynamically loaded from server -->
             </div>
         </div>
     </section>
@@ -129,14 +157,19 @@
                 </svg>
             </a>
         </div>
+        </div>
         <p data-key="footer_rights">© 2025 Lemar Bistro. Tüm Hakları Saklıdır.</p>
         <a href="/admin" class="admin-link">Admin</a>
     </footer>
 
-    <script src="data.js"></script>
+    <button id="scroll-to-top" title="Yukarı Çık">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
     <script src="script.js"></script>
-
-
 </body>
 
 </html>

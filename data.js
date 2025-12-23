@@ -1667,21 +1667,17 @@ window.LEMAR_MENU = {
     },
     {
       "id": "mj8wie6uz17wn54fxu",
-      "category": "soguk-icecekler-list",
+      "category": "kokteyl-list",
       "name": "Piña Colada",
       "description": "",
-      "price": "1 700 ₺",
-      "name_en": "Piña Colada",
-      "description_en": ""
+      "price": "1 700 ₺"
     },
     {
       "id": "mj8wie6utgy98mamg1",
-      "category": "soguk-icecekler-list",
+      "category": "mezeler-list",
       "name": "Saksuka",
       "description": "",
-      "price": "190 ₺",
-      "name_en": "Saksuka",
-      "description_en": ""
+      "price": "190 ₺"
     },
     {
       "id": "mj8wie6uuqfmhtvrre",
@@ -2510,16 +2506,16 @@ window.LEMAR_GALLERY = {
       ]
     },
     {
-      "src": "aksam4.jpg",
-      "times": [
-        "aksam"
-      ]
-    },
-    {
       "src": "sabah_ogle_aksam.jpg",
       "times": [
         "sabah",
         "oglen",
+        "aksam"
+      ]
+    },
+    {
+      "src": "uploads/1766420275176-570301209.jpg",
+      "times": [
         "aksam"
       ]
     }
@@ -2535,3 +2531,99 @@ window.LEMAR_BACKGROUNDS = {
     "aksam": 18
   }
 };
+window.LEMAR_ARTISTS = [
+  {
+    "dayName": "Pazartesi",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Salı",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Çarşamba",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Perşembe",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Cuma",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Cumartesi",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Pazar",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  }
+];
+window.LEMAR_TESTIMONIALS = [
+  {
+    "id": "2",
+    "name": "Elif S.",
+    "text": "Servis çok hızlı ve personeller çok ilgili. Yemekler ise efsane!"
+  },
+  {
+    "id": "3",
+    "name": "Murat A.",
+    "text": "Hafta sonu etkinlikleri çok başarılı. Eğlencenin yeni adresi Lemar."
+  },
+  {
+    "id": "mjhcxr6i",
+    "name": "Efkan T.",
+    "text": "mükemmel bi lezzet"
+  }
+];

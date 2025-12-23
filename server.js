@@ -13,6 +13,8 @@ const DATA_FILE = path.join(__dirname, 'menu.json');
 const GALLERY_FILE = path.join(__dirname, 'gallery.json');
 const BACKGROUNDS_FILE = path.join(__dirname, 'backgrounds.json');
 const DATA_JS_FILE = path.join(__dirname, 'data.js'); // New: Target for portable data
+const ARTISTS_FILE = path.join(__dirname, 'artists.json');
+const TESTIMONIALS_FILE = path.join(__dirname, 'testimonials.json');
 
 // Multer Config for Uploads
 const storage = multer.diskStorage({
@@ -50,16 +52,20 @@ const checkAuth = (req, res, next) => {
 // --- HELPER: Sync JSON to data.js for Portable Mode ---
 async function updateDataJs() {
     try {
-        const [menu, gallery, backgrounds] = await Promise.all([
+        const [menu, gallery, backgrounds, artists, testimonials] = await Promise.all([
             fs.readFile(DATA_FILE, 'utf8').catch(() => '{"items":[],"categories":{}}'),
             fs.readFile(GALLERY_FILE, 'utf8').catch(() => '{"images":[]}'),
-            fs.readFile(BACKGROUNDS_FILE, 'utf8').catch(() => '{}')
+            fs.readFile(BACKGROUNDS_FILE, 'utf8').catch(() => '{}'),
+            fs.readFile(ARTISTS_FILE, 'utf8').catch(() => '{}'),
+            fs.readFile(TESTIMONIALS_FILE, 'utf8').catch(() => '[]')
         ]);
 
         const content = `
 window.LEMAR_MENU = ${menu};
 window.LEMAR_GALLERY = ${gallery};
 window.LEMAR_BACKGROUNDS = ${backgrounds};
+window.LEMAR_ARTISTS = ${artists};
+window.LEMAR_TESTIMONIALS = ${testimonials};
 `;
         await fs.writeFile(DATA_JS_FILE, content, 'utf8');
         console.log('data.js updated successfully.');
@@ -262,6 +268,113 @@ app.delete('/api/gallery', checkAuth, async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to delete gallery item' });
+    }
+});
+
+// --- Artists Endpoints ---
+
+// GET Artists
+app.get('/api/artists', async (req, res) => {
+    try {
+        const data = await fs.readFile(ARTISTS_FILE, 'utf8');
+        res.json(JSON.parse(data));
+    } catch (err) {
+        // Fallback to empty week
+        const emptyWeek = Array(7).fill(null).map((_, i) => ({
+            dayName: ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"][i],
+            artist1: { name: 'Sanatçı Bekleniyor', image: 'uploads/default_artist.png' },
+            artist2: { name: 'Sanatçı Bekleniyor', image: 'uploads/default_artist.png' }
+        }));
+        res.json(emptyWeek);
+    }
+});
+
+// POST Update Artist
+app.post('/api/artists', checkAuth, upload.single('image'), async (req, res) => {
+    try {
+        const { dayIndex, artistSlot, name } = req.body;
+        const dIdx = parseInt(dayIndex);
+        const slot = parseInt(artistSlot); // 1 or 2
+
+        if (isNaN(dIdx) || dIdx < 0 || dIdx > 6 || (slot !== 1 && slot !== 2)) {
+            return res.status(400).json({ error: 'Invalid day index or artist slot' });
+        }
+
+        let data = [];
+        try {
+            data = JSON.parse(await fs.readFile(ARTISTS_FILE, 'utf8'));
+        } catch (e) {
+            data = Array(7).fill(null).map((_, i) => ({
+                dayName: ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"][i],
+                artist1: { name: 'Sanatçı Bekleniyor', image: 'uploads/default_artist.png' },
+                artist2: { name: 'Sanatçı Bekleniyor', image: 'uploads/default_artist.png' }
+            }));
+        }
+
+        const artistKey = `artist${slot}`;
+        if (name) data[dIdx][artistKey].name = name;
+        if (req.file) data[dIdx][artistKey].image = 'uploads/' + req.file.filename;
+
+        await fs.writeFile(ARTISTS_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs(); // Sync
+        res.json({ success: true, artist: data[dIdx][artistKey] });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to update artist' });
+    }
+});
+
+// --- Testimonials Endpoints ---
+
+// GET Testimonials
+app.get('/api/testimonials', async (req, res) => {
+    try {
+        const data = await fs.readFile(TESTIMONIALS_FILE, 'utf8');
+        res.json(JSON.parse(data));
+    } catch (err) {
+        res.json([]);
+    }
+});
+
+// POST (Add/Update) Testimonial
+app.post('/api/testimonials', checkAuth, async (req, res) => {
+    try {
+        const { id, name, text } = req.body;
+        if (!name || !text) return res.status(400).json({ error: 'Name and text required' });
+
+        let data = [];
+        try {
+            data = JSON.parse(await fs.readFile(TESTIMONIALS_FILE, 'utf8'));
+        } catch (e) { data = []; }
+
+        if (id) {
+            // Update
+            const idx = data.findIndex(t => t.id === id);
+            if (idx > -1) data[idx] = { id, name, text };
+        } else {
+            // Add
+            data.push({ id: Date.now().toString(36), name, text });
+        }
+
+        await fs.writeFile(TESTIMONIALS_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs();
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to save testimonial' });
+    }
+});
+
+// DELETE Testimonial
+app.delete('/api/testimonials/:id', checkAuth, async (req, res) => {
+    try {
+        const { id } = req.params;
+        let data = JSON.parse(await fs.readFile(TESTIMONIALS_FILE, 'utf8'));
+        data = data.filter(t => t.id !== id);
+        await fs.writeFile(TESTIMONIALS_FILE, JSON.stringify(data, null, 2));
+        await updateDataJs();
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to delete testimonial' });
     }
 });
 

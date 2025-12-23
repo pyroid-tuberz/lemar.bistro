@@ -1666,21 +1666,17 @@
     },
     {
       "id": "mj8wie6uz17wn54fxu",
-      "category": "soguk-icecekler-list",
+      "category": "kokteyl-list",
       "name": "Piña Colada",
       "description": "",
-      "price": "1 700 ₺",
-      "name_en": "Piña Colada",
-      "description_en": ""
+      "price": "1 700 ₺"
     },
     {
       "id": "mj8wie6utgy98mamg1",
-      "category": "soguk-icecekler-list",
+      "category": "mezeler-list",
       "name": "Saksuka",
       "description": "",
-      "price": "190 ₺",
-      "name_en": "Saksuka",
-      "description_en": ""
+      "price": "190 ₺"
     },
     {
       "id": "mj8wie6uuqfmhtvrre",
