@@ -532,13 +532,18 @@ function initApp() {
         const newScrollBtn = scrollToTopBtn.cloneNode(true);
         scrollToTopBtn.parentNode.replaceChild(newScrollBtn, scrollToTopBtn);
 
+        let scrollTimeout;
         window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 50) {
-                newScrollBtn.classList.add('show');
-            } else {
-                newScrollBtn.classList.remove('show');
-            }
-        });
+            if (scrollTimeout) return;
+            scrollTimeout = requestAnimationFrame(() => {
+                if (window.pageYOffset > 50) {
+                    newScrollBtn.classList.add('show');
+                } else {
+                    newScrollBtn.classList.remove('show');
+                }
+                scrollTimeout = null;
+            });
+        }, { passive: true });
 
         newScrollBtn.addEventListener('click', () => {
             window.scrollTo({

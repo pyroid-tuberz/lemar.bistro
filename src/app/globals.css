@@ -764,14 +764,32 @@ img {
     filter: none !important;
   }
 
-  /* Performance optimization: Disable all transitions and animations */
+  /* Performance optimization: Disable expensive effects */
   *,
   *::before,
   *::after {
-    animation: none !important;
-    transition: none !important;
-    transition-duration: 0s !important;
     backdrop-filter: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    /* Stop heavy keyframe animations */
+  }
+
+  /* Allow transform/opacity transitions for UX (like menu slide), but keep them fast */
+  .menu-panel,
+  .nav-button,
+  .artist-day-tab {
+    transition-duration: 0.2s !important;
+    /* Speed up transitions */
+  }
+
+  .header h1 {
+    filter: none !important;
+    animation: none !important;
+  }
+
+  .snowflake {
+    display: none !important;
   }
 
   .nav-links {
