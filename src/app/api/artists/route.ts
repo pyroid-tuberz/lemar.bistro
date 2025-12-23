@@ -46,14 +46,23 @@ export async function POST(request: Request) {
 
         const artistKey = `artist${slot}` as 'artist1' | 'artist2';
         if (name) data[dIdx][artistKey].name = name;
-        if (file) {
-            const savedPath = await saveFile(file);
-            data[dIdx][artistKey].image = savedPath;
+
+        // Only save file if it has content
+        if (file && file.size > 0) {
+            try {
+                const savedPath = await saveFile(file);
+                data[dIdx][artistKey].image = savedPath;
+            } catch (fileErr) {
+                console.error('File save error:', fileErr);
+                // Continue saving name even if image fails? 
+                // Better to throw so user knows something went wrong, or just log it.
+            }
         }
 
         await writeJson('artists.json', data);
         return NextResponse.json({ success: true, artist: data[dIdx][artistKey] });
     } catch (error) {
+        console.error('Artist POST error:', error);
         return NextResponse.json({ error: 'Failed to update artist' }, { status: 500 });
     }
 }
