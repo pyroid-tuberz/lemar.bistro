@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lemar Bistro - Admin Panel</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #FFC700;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #e6b400;
+        }
+
+        button.delete-btn {
+            background-color: #ff4444;
+            color: white;
+        }
+
+        button.edit-btn {
+            background-color: #444;
+            color: white;
+            margin-right: 5px;
+        }
+
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f8f8;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 50%;
+            max-width: 500px;
+        }
+
+        .close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .dashboard header div {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+                justify-content: center;
+            }
+
+            .dashboard button {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+                flex: 1 0 45%;
+                /* Two buttons per row roughly */
+            }
+
+            /* Stack tab content headers */
+            [id$="-tab"] div {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 10px;
+            }
+
+            /* Table to card conversion */
+            table,
+            thead,
+            tbody,
+            th,
+            td,
+            tr {
+                display: block;
+            }
+
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            tr {
+                border: 1px solid #ccc;
+                margin-bottom: 10px;
+                border-radius: 8px;
+                padding: 10px;
+                background: #f9f9f9;
+            }
+
+            td {
+                border: none;
+                border-bottom: 1px solid #eee;
+                position: relative;
+                padding-left: 50%;
+                text-align: right;
+                min-height: 35px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+            }
+
+            td:last-child {
+                border-bottom: 0;
+            }
+
+            td:before {
+                position: absolute;
+                left: 10px;
+                width: 45%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+                content: attr(data-label);
+            }
+
+            /* Adjust modals */
+            .modal-content {
+                width: 90%;
+                margin: 20% auto;
+                padding: 15px;
+            }
+
+            /* Responsive Grids */
+            #gallery-grid,
+            #artists-tab>div,
+            #background-tab>div:last-child {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+
+            .bg-card {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen">
+        <div class="container" style="width: 300px;">
+            <h2>Admin Girişi</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label>Kullanıcı Adı</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Şifre</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" style="width: 100%">Giriş Yap</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h1>Yönetim Paneli</h1>
+                <div>
+                    <button onclick="switchTab('menu')">Menü</button>
+                    <button onclick="switchTab('gallery')">Galeri</button>
+                    <button onclick="switchTab('category')">Kategoriler</button>
+                    <button onclick="switchTab('artists')">Sanatçılar</button>
+                    <button onclick="switchTab('testimonials')">Müşteri Yorumları</button>
+                    <button onclick="switchTab('background')">Arkaplan</button>
+                </div>
+            </div>
+
+            <!-- MENU TAB -->
+            <div id="menu-tab">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>Menü Yönetimi</h2>
+                    <button onclick="openModal()">+ Yeni Ürün Ekle</button>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="search-box" placeholder="Ürün Ara...">
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ürün Adı</th>
+                            <th>Kategori</th>
+                            <th>Fiyat</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-table-body">
+                        <!-- Items will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- GALLERY TAB -->
+            <div id="gallery-tab" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>Galeri Yönetimi</h2>
+                    <button onclick="openGalleryModal()">+ Fotoğraf Yükle</button>
+                </div>
+                <div id="gallery-grid"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 20px;">
+                    <!-- Images will be injected here -->
+                </div>
+            </div>
+
+            <!-- CATEGORY TAB -->
+            <div id="category-tab" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2>Kategori Yönetimi</h2>
+                    <button onclick="openCategoryModal()">+ Yeni Kategori</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Adı</th>
+                            <th>Üst Menü</th>
+                            <th>Renk</th>
+                            <th>Görünüm</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categories-table-body">
+                        <!-- Categories injected here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TESTIMONIALS TAB -->
+            <div id="testimonials-tab" style="display: none;">
+                <h2>Müşteri Yorumlarını Yönet</h2>
+                <div class="admin-card"
+                    style="background:#fff; padding:20px; border-radius:12px; border:1px solid #ddd; margin-bottom: 20px;">
+                    <h3>Yeni Yorum Ekle</h3>
+                    <form id="add-testimonial-form">
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label style="display:block; margin-bottom:5px;">Müşteri Adı:</label>
+                            <input type="text" id="testi-name" placeholder="Örn: Can Y." required
+                                style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;">
+                        </div>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label style="display:block; margin-bottom:5px;">Yorum:</label>
+                            <textarea id="testi-text" rows="3" placeholder="Yorum metni..." required
+                                style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px;"></textarea>
+                        </div>
+                        <button type="submit" class="save-btn"
+                            style="background:#FFC700; color:#000; padding:10px 20px; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">Yorum
+                            Ekle</button>
+                    </form>
+                </div>
+
+                <div class="admin-card"
+                    style="background:#fff; padding:20px; border-radius:12px; border:1px solid #ddd;">
+                    <h3>Mevcut Yorumlar</h3>
+                    <div id="testimonials-list" class="item-list">
+                        <!-- Dynamic List -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ARTISTS TAB -->
+            <div id="artists-tab" style="display: none;">
+                <h2>Haftalık Sanatçı Programı</h2>
+                <div id="weekly-artists-container" style="margin-top:20px;">
+                    <!-- Dynamically generated 7-day grid -->
+                </div>
+            </div>
+
+            <!-- BACKGROUND TAB -->
+            <div id="background-tab" style="display: none;">
+                <h2>Arkaplan Yönetimi</h2>
+                <div style="margin-bottom: 20px;">
+                    <h3>Görünüm Saatleri</h3>
+                    <div style="display: flex; gap: 20px; align-items: flex-end;">
+                        <div class="form-group">
+                            <label id="label-sabah">Sabah</label>
+                            <input type="number" id="time-start-sabah" style="width: 80px;">:00
+                        </div>
+                        <div class="form-group">
+                            <label id="label-oglen">Öğle</label>
+                            <input type="number" id="time-start-oglen" style="width: 80px;">:00
+                        </div>
+                        <div class="form-group">
+                            <label id="label-aksam">Akşam</label>
+                            <input type="number" id="time-start-aksam" style="width: 80px;">:00
+                        </div>
+                        <button onclick="saveTimeSlots()" style="height: 35px; margin-bottom: 15px;">Kaydet</button>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                    <div class="bg-card"
+                        style="background:#fff; padding:15px; border-radius:12px; border:1px solid #ddd;">
+                        <h3>Sabah Görseli</h3>
+                        <img id="bg-img-sabah" src=""
+                            style="width:100%; height:150px; object-fit:cover; border-radius:8px; margin-bottom:10px;">
+                        <form onsubmit="updateBackground(event, 'sabah')">
+                            <input type="file" name="image" accept="image/*" required>
+                            <button type="submit" style="width:100%; margin-top:10px;">Yükle</button>
+                        </form>
+                        <button onclick="resetBackground('sabah')"
+                            style="width:100%; margin-top:5px; background:#ddd;">Sıfırla</button>
+                    </div>
+                    <div class="bg-card"
+                        style="background:#fff; padding:15px; border-radius:12px; border:1px solid #ddd;">
+                        <h3>Öğlen Görseli</h3>
+                        <img id="bg-img-oglen" src=""
+                            style="width:100%; height:150px; object-fit:cover; border-radius:8px; margin-bottom:10px;">
+                        <form onsubmit="updateBackground(event, 'oglen')">
+                            <input type="file" name="image" accept="image/*" required>
+                            <button type="submit" style="width:100%; margin-top:10px;">Yükle</button>
+                        </form>
+                        <button onclick="resetBackground('oglen')"
+                            style="width:100%; margin-top:5px; background:#ddd;">Sıfırla</button>
+                    </div>
+                    <div class="bg-card"
+                        style="background:#fff; padding:15px; border-radius:12px; border:1px solid #ddd;">
+                        <h3>Akşam Görseli</h3>
+                        <img id="bg-img-aksam" src=""
+                            style="width:100%; height:150px; object-fit:cover; border-radius:8px; margin-bottom:10px;">
+                        <form onsubmit="updateBackground(event, 'aksam')">
+                            <input type="file" name="image" accept="image/*" required>
+                            <button type="submit" style="width:100%; margin-top:10px;">Yükle</button>
+                        </form>
+                        <button onclick="resetBackground('aksam')"
+                            style="width:100%; margin-top:5px; background:#ddd;">Sıfırla</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <!-- Add/Edit Modal -->
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modal-title">Ürün Ekle</h2>
+            <form id="item-form">
+                <input type="hidden" id="item-id">
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <div style="display:flex; gap:5px;">
+                        <select id="item-category" required style="flex-grow:1;">
+                            <!-- Categories injected via JS -->
+                        </select>
+                        <button type="button" onclick="openCategoryModal()"
+                            style="width:auto; padding:0 10px;">+</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Ürün Adı</label>
+                    <input type="text" id="item-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Açıklama</label>
+                    <textarea id="item-description" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Fiyat</label>
+                    <input type="text" id="item-price" required>
+                </div>
+
+                <button type="submit" style="width: 100%">Kaydet</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="category-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCategoryModal()">&times;</span>
+            <h2 id="cat-modal-title">Kategori Yönetimi</h2>
+            <form id="category-form">
+                <input type="hidden" id="cat-id">
+                <div class="form-group">
+                    <label>Kategori Adı</label>
+                    <input type="text" id="cat-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Üst Menü (Parent)</label>
+                    <select id="cat-parent">
+                        <!-- Injected JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Renk</label>
+                    <input type="color" id="cat-color" value="#FFC700" style="width:100%; height:40px;">
+                </div>
+                <div class="form-group">
+                    <label>Büyüklük</label>
+                    <select id="cat-size">
+                        <option value="normal">Normal</option>
+                        <option value="large">Büyük (Vurgulu)</option>
+                    </select>
+                </div>
+                <button type="submit" style="width: 100%">Kaydet</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Gallery Upload Modal -->
+    <div id="gallery-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeGalleryModal()">&times;</span>
+            <h2>Fotoğraf Yükle</h2>
+            <form id="gallery-form">
+                <div class="form-group">
+                    <label>Fotoğraf Seç</label>
+                    <input type="file" id="gallery-file" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label>Görüntülenecek Zamanlar</label>
+                    <div>
+                        <input type="checkbox" id="time-sabah" value="sabah"> <label style="display:inline"
+                            for="time-sabah">Sabah</label>
+                        <input type="checkbox" id="time-oglen" value="oglen"> <label style="display:inline"
+                            for="time-oglen">Öğlen</label>
+                        <input type="checkbox" id="time-aksam" value="aksam"> <label style="display:inline"
+                            for="time-aksam">Akşam</label>
+                    </div>
+                </div>
+                <button type="submit" style="width: 100%">Yükle</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api';
+        let token = localStorage.getItem('adminToken');
+        let menuData = { items: [], categories: {} };
+
+        // DOM Elements
+        const loginScreen = document.getElementById('login-screen');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('login-form');
+        const tableBody = document.getElementById('items-table-body');
+        const modal = document.getElementById('item-modal');
+        const itemForm = document.getElementById('item-form');
+        const searchBox = document.getElementById('search-box');
+
+        // Gallery Elements
+        const galleryGrid = document.getElementById('gallery-grid');
+        const galleryModal = document.getElementById('gallery-modal');
+        const galleryForm = document.getElementById('gallery-form');
+
+        // Login Logic
+        if (token) showDashboard();
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = e.target.username.value;
+            const password = e.target.password.value;
+
+            try {
+                const res = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    token = data.token;
+                    localStorage.setItem('adminToken', token);
+                    showDashboard();
+                } else {
+                    alert('Giriş başarısız!');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Bir hata oluştu.');
+            }
+        });
+
+
+        function showDashboard() {
+            loginScreen.style.display = 'none';
+            dashboard.style.display = 'block';
+            loadMenu();
+            loadGallery();
+            loadBackgrounds();
+            loadArtists();
+            loadTestimonials();
+            switchTab('menu'); // Default to menu tab
+        }
+
+        function switchTab(tab) {
+            document.getElementById('menu-tab').style.display = tab === 'menu' ? 'block' : 'none';
+            document.getElementById('gallery-tab').style.display = tab === 'gallery' ? 'block' : 'none';
+            document.getElementById('category-tab').style.display = tab === 'category' ? 'block' : 'none';
+            document.getElementById('artists-tab').style.display = tab === 'artists' ? 'block' : 'none';
+            document.getElementById('testimonials-tab').style.display = tab === 'testimonials' ? 'block' : 'none';
+            document.getElementById('background-tab').style.display = tab === 'background' ? 'block' : 'none';
+
+            if (tab === 'artists') loadWeeklyArtists();
+        }
+
+        // --- TESTIMONIALS LOGIC ---
+        async function loadTestimonials() {
+            try {
+                const res = await fetch(`${API_URL}/testimonials`);
+                const data = await res.json();
+                const list = document.getElementById('testimonials-list');
+                if (!list) return;
+                list.innerHTML = '';
+                data.forEach(t => {
+                    const div = document.createElement('div');
+                    div.className = 'item-row';
+                    div.style.display = 'flex';
+                    div.style.justifyContent = 'space-between';
+                    div.style.alignItems = 'center';
+                    div.style.padding = '10px';
+                    div.style.borderBottom = '1px solid #eee';
+                    div.innerHTML = `
+                        <div style="color: #333;">
+                            <strong>${t.name}</strong>: ${t.text}
+                        </div>
+                        <button class="delete-btn" onclick="deleteTestimonial('${t.id}')" style="background-color: #ff4444; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer;">Sil</button>
+                    `;
+                    list.appendChild(div);
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        const addTestiForm = document.getElementById('add-testimonial-form');
+        if (addTestiForm) {
+            addTestiForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('testi-name').value;
+                const text = document.getElementById('testi-text').value;
+
+                try {
+                    const res = await fetch(`${API_URL}/testimonials`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify({ name, text })
+                    });
+                    if (res.ok) {
+                        addTestiForm.reset();
+                        loadTestimonials();
+                    }
+                } catch (err) { console.error(err); }
+            });
+        }
+
+        async function deleteTestimonial(id) {
+            if (!confirm('Yorumu silmek istediğinizden emin misiniz?')) return;
+            try {
+                const res = await fetch(`${API_URL}/testimonials/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    loadTestimonials();
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // --- WEEKLY ARTISTS LOGIC ---
+        async function loadWeeklyArtists() {
+            try {
+                const res = await fetch(`${API_URL}/artists`);
+                const weekData = await res.json();
+                renderWeeklyArtists(weekData);
+            } catch (err) { console.error(err); }
+        }
+
+        function renderWeeklyArtists(weekData) {
+            const container = document.getElementById('weekly-artists-container');
+            if (!container) return;
+
+            // Modern grid layout
+            container.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; margin-top: 30px;';
+            container.innerHTML = '';
+
+            const dayColors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE'];
+
+            weekData.forEach((day, dayIndex) => {
+                const dayCard = document.createElement('div');
+                dayCard.style.cssText = `
+                    background: linear-gradient(135deg, ${dayColors[dayIndex]}15 0%, ${dayColors[dayIndex]}05 100%);
+                    padding: 25px;
+                    border-radius: 16px;
+                    border: 2px solid ${dayColors[dayIndex]}40;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                `;
+
+                dayCard.onmouseenter = () => {
+                    dayCard.style.transform = 'translateY(-5px)';
+                    dayCard.style.boxShadow = '0 8px 25px rgba(0,0,0,0.12)';
+                };
+                dayCard.onmouseleave = () => {
+                    dayCard.style.transform = 'translateY(0)';
+                    dayCard.style.boxShadow = '0 4px 15px rgba(0,0,0,0.08)';
+                };
+
+                dayCard.innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid ${dayColors[dayIndex]}30;">
+                        <div style="width: 50px; height: 50px; background: ${dayColors[dayIndex]}; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px; box-shadow: 0 4px 10px ${dayColors[dayIndex]}40;">
+                            <span style="color: white; font-size: 24px; font-weight: bold;">${day.dayName.charAt(0)}</span>
+                        </div>
+                        <h3 style="margin: 0; color: #2c3e50; font-size: 22px; font-weight: 600;">${day.dayName}</h3>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        ${renderArtistSlot(dayIndex, 1, day.artist1, dayColors[dayIndex])}
+                        ${renderArtistSlot(dayIndex, 2, day.artist2, dayColors[dayIndex])}
+                    </div>
+                `;
+                container.appendChild(dayCard);
+            });
+        }
+
+        function renderArtistSlot(dayIndex, slot, artist, color) {
+            return `
+                <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #e0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <div style="width: 35px; height: 35px; background: ${color}20; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+                            <span style="color: ${color}; font-weight: bold; font-size: 16px;">🎤</span>
+                        </div>
+                        <h4 style="margin: 0; color: #555; font-size: 15px; font-weight: 600;">Sahne ${slot}</h4>
+                    </div>
+                    
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <img src="${artist.image}" 
+                             style="width: 140px; height: 140px; object-fit: cover; border-radius: 50%; border: 4px solid ${color}40; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin: 0 auto; display: block;"
+                             onerror="this.src='uploads/default_artist.png'">
+                        <p style="margin: 12px 0 0 0; font-size: 16px; font-weight: 600; color: #2c3e50;">${artist.name}</p>
+                    </div>
+                    
+                    <form onsubmit="updateWeeklyArtist(event, ${dayIndex}, ${slot})" style="margin-top: 15px;">
+                        <div style="margin-bottom: 12px;">
+                            <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #666; font-weight: 500;">Sanatçı Adı</label>
+                            <input type="text" value="${artist.name}" required 
+                                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; transition: border-color 0.3s;"
+                                   onfocus="this.style.borderColor='${color}'"
+                                   onblur="this.style.borderColor='#ddd'">
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <label style="display: block; margin-bottom: 6px; font-size: 13px; color: #666; font-weight: 500;">Fotoğraf Değiştir</label>
+                            <input type="file" name="image" accept="image/*" 
+                                   style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; background: #f9f9f9;">
+                        </div>
+                        <button type="submit" 
+                                style="width: 100%; padding: 12px; background: linear-gradient(135deg, ${color} 0%, ${color}dd 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 8px ${color}40;"
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px ${color}60'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px ${color}40'">
+                            💾 Güncelle
+                        </button>
+                    </form>
+                </div>
+            `;
+        }
+
+        window.updateWeeklyArtist = async (e, dayIndex, artistSlot) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const name = e.target.querySelector('input[type="text"]').value;
+
+            formData.append('dayIndex', dayIndex);
+            formData.append('artistSlot', artistSlot);
+            formData.append('name', name);
+
+            try {
+                const res = await fetch(`${API_URL}/artists`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                if (res.ok) {
+                    alert('Sanatçı güncellendi!');
+                    loadWeeklyArtists();
+                } else {
+                    alert('Güncelleme başarısız.');
+                }
+            } catch (err) { console.error(err); }
+        };
+
+        // --- BACKGROUND LOGIC ---
+        async function loadBackgrounds() {
+            try {
+                const res = await fetch(`${API_URL}/backgrounds`);
+                const data = await res.json();
+                document.getElementById('bg-img-sabah').src = data.sabah;
+                document.getElementById('bg-img-oglen').src = data.oglen;
+                document.getElementById('bg-img-aksam').src = data.aksam;
+
+                // Populate times
+                const times = data.times || { sabah: 6, oglen: 12, aksam: 18 };
+                document.getElementById('time-start-sabah').value = times.sabah;
+                document.getElementById('time-start-oglen').value = times.oglen;
+                document.getElementById('time-start-aksam').value = times.aksam;
+
+                updateLabels(times);
+            } catch (err) { console.error(err); }
+        }
+
+        function updateLabels(times) {
+            document.getElementById('label-sabah').textContent = `Sabah (${times.sabah}:00 - ${times.oglen}:00)`;
+            document.getElementById('label-oglen').textContent = `Öğle (${times.oglen}:00 - ${times.aksam}:00)`;
+            document.getElementById('label-aksam').textContent = `Akşam (${times.aksam}:00 - ${times.sabah}:00)`;
+        }
+
+        async function saveTimeSlots() {
+            const times = {
+                sabah: document.getElementById('time-start-sabah').value,
+                oglen: document.getElementById('time-start-oglen').value,
+                aksam: document.getElementById('time-start-aksam').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/background/times`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ times })
+                });
+                if (res.ok) {
+                    alert('Saatler güncellendi!');
+                    const data = await res.json();
+                    updateLabels(data.times);
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function updateBackground(e, slot) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            formData.append('timeSlot', slot);
+
+            try {
+                const res = await fetch(`${API_URL}/background`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                if (res.ok) {
+                    alert('Arkaplan güncellendi!');
+                    loadBackgrounds();
+                } else { alert('Hata oluştu'); }
+            } catch (err) { console.error(err); }
+        }
+
+        async function resetBackground(slot) {
+            if (!confirm('Varsayılan görseline dönülsün mü?')) return;
+            try {
+                const res = await fetch(`${API_URL}/background/reset`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ timeSlot: slot })
+                });
+                if (res.ok) {
+                    loadBackgrounds();
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // --- MENU LOGIC ---
+        async function loadMenu() {
+            const res = await fetch(`${API_URL}/menu`);
+            menuData = await res.json();
+            renderTable(menuData.items);
+            populateCategories(menuData.categories);
+            renderCategoryTable(menuData.categories); // Also render category tab
+        }
+
+        function populateCategories(categories) {
+            const select = document.getElementById('item-category');
+            select.innerHTML = '';
+            // categories is now object: { id: {name, ...} }
+            for (const [id, data] of Object.entries(categories)) {
+                if (id === 'root') continue; // Don't add items to root directly usually
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = data.name || data; // Handle both old string and new object
+                select.appendChild(option);
+            }
+        }
+
+        // --- CATEGORY TAB LOGIC ---
+        const catModal = document.getElementById('category-modal');
+        const catForm = document.getElementById('category-form');
+
+        function renderCategoryTable(categories) {
+            const tbody = document.getElementById('categories-table-body');
+            tbody.innerHTML = '';
+
+            for (const [id, data] of Object.entries(categories)) {
+                if (id === 'root') continue;
+                const row = document.createElement('tr');
+                const parentName = categories[data.parent]?.name || 'Menü (Root)';
+                row.innerHTML = `
+                    <td data-label="Adı">${data.name}</td>
+                    <td data-label="Üst Menü">${parentName}</td>
+                    <td data-label="Renk"><div style="width:20px; height:20px; background:${data.color}; border-radius:50%; margin-left: auto;"></div></td>
+                    <td data-label="Görünüm">${data.size}</td>
+                    <td data-label="İşlemler">
+                        <button onclick='editCategory("${id}")'>Düzenle</button>
+                        <button class="delete-btn" onclick='deleteCategory("${id}")' style="background-color: #ff4444; color: white;">X</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            }
+        }
+
+        window.openCategoryModal = () => {
+            catForm.reset();
+            document.getElementById('cat-id').value = '';
+            populateParentSelect();
+            catModal.style.display = 'block';
+        };
+
+        window.closeCategoryModal = () => {
+            catModal.style.display = 'none';
+        };
+
+        window.editCategory = (id) => {
+            const data = menuData.categories[id];
+            document.getElementById('cat-id').value = id;
+            document.getElementById('cat-name').value = data.name;
+            populateParentSelect();
+            document.getElementById('cat-parent').value = data.parent || 'root';
+            document.getElementById('cat-color').value = data.color || '#FFC700';
+            document.getElementById('cat-size').value = data.size || 'normal';
+            catModal.style.display = 'block';
+        };
+
+        window.deleteCategory = async (id) => {
+            if (!confirm('Bu kategoriyi silmek istediğinize emin misiniz?')) return;
+            try {
+                const res = await fetch(`${API_URL}/category/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    loadMenu();
+                } else {
+                    alert('Silinemedi.');
+                }
+            } catch (err) { console.error(err); }
+        };
+
+        function populateParentSelect() {
+            const select = document.getElementById('cat-parent');
+            select.innerHTML = '<option value="root">Menü (Root)</option>';
+            for (const [id, data] of Object.entries(menuData.categories)) {
+                if (id !== 'root') {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = data.name;
+                    select.appendChild(option);
+                }
+            }
+        }
+
+        catForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('cat-id').value ||
+                document.getElementById('cat-name').value.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+
+            const payload = {
+                id: id,
+                name: document.getElementById('cat-name').value,
+                parent: document.getElementById('cat-parent').value,
+                color: document.getElementById('cat-color').value,
+                size: document.getElementById('cat-size').value
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/category`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    closeCategoryModal();
+                    loadMenu();
+                }
+            } catch (err) { console.error(err); }
+        });
+
+        function renderTable(items) {
+            tableBody.innerHTML = '';
+            items.forEach(item => {
+                const row = document.createElement('tr');
+                const catName = menuData.categories[item.category]?.name || menuData.categories[item.category];
+                row.innerHTML = `
+                    <td data-label="Ürün Adı">${item.name}</td>
+                    <td data-label="Kategori">${catName}</td>
+                    <td data-label="Fiyat">${item.price}</td>
+                    <td data-label="İşlemler">
+                        <button class="edit-btn" onclick='editItem(${JSON.stringify(item)})'>Düzenle</button>
+                        <button class="delete-btn" onclick="deleteItem('${item.id}')">Sil</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Search
+        searchBox.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = menuData.items.filter(item =>
+                item.name.toLowerCase().includes(term) ||
+                (item.description && item.description.toLowerCase().includes(term))
+            );
+            renderTable(filtered);
+        });
+
+        // Modal Logic
+        window.openModal = () => {
+            itemForm.reset();
+            document.getElementById('item-id').value = '';
+            document.getElementById('modal-title').textContent = 'Ürün Ekle';
+            modal.style.display = 'block';
+        };
+
+        window.closeModal = () => {
+            modal.style.display = 'none';
+        };
+
+        window.editItem = (item) => {
+            document.getElementById('item-id').value = item.id;
+            document.getElementById('item-category').value = item.category;
+            document.getElementById('item-name').value = item.name;
+            document.getElementById('item-description').value = item.description || '';
+            document.getElementById('item-price').value = item.price;
+
+            document.getElementById('modal-title').textContent = 'Ürün Düzenle';
+            modal.style.display = 'block';
+        };
+
+        // Save Item
+        itemForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            let price = document.getElementById('item-price').value.trim();
+            if (price && !price.includes('₺')) {
+                price += ' ₺';
+            }
+
+            const item = {
+                id: document.getElementById('item-id').value || null,
+                category: document.getElementById('item-category').value,
+                name: document.getElementById('item-name').value,
+                description: document.getElementById('item-description').value,
+                price: price
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/menu/item`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ item })
+                });
+
+                if (res.ok) {
+                    closeModal();
+                    loadMenu();
+                } else {
+                    alert('Kaydedilemedi.');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        // Delete Item
+        window.deleteItem = async (id) => {
+            if (!confirm('Bu ürünü silmek istediğinize emin misiniz?')) return;
+
+            try {
+                const res = await fetch(`${API_URL}/menu/item/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.ok) {
+                    loadMenu();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        // --- GALLERY LOGIC ---
+
+        async function loadGallery() {
+            const res = await fetch(`${API_URL}/gallery`);
+            const data = await res.json();
+            renderGallery(data.images);
+        }
+
+        function renderGallery(images) {
+            galleryGrid.innerHTML = '';
+            images.forEach(img => {
+                const div = document.createElement('div');
+                div.style.position = 'relative';
+                div.innerHTML = `
+                    <img src="${img.src}" style="width:100%; height:100px; object-fit:cover; border-radius:4px;">
+                    <button onclick="deleteImage('${img.src}')" style="position:absolute; top:5px; right:5px; background:red; color:white; border:none; border-radius:3px; cursor:pointer;">X</button>
+                    <div style="font-size:10px; margin-top:2px;">${img.times.join(', ')}</div>
+                `;
+                galleryGrid.appendChild(div);
+            });
+        }
+
+        window.openGalleryModal = () => {
+            galleryForm.reset();
+            galleryModal.style.display = 'block';
+        }
+
+        window.closeGalleryModal = () => {
+            galleryModal.style.display = 'none';
+        }
+
+        galleryForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('gallery-file');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const times = [];
+            if (document.getElementById('time-sabah').checked) times.push('sabah');
+            if (document.getElementById('time-oglen').checked) times.push('oglen');
+            if (document.getElementById('time-aksam').checked) times.push('aksam');
+
+            if (times.length === 0) {
+                alert('Lütfen en az bir zaman dilimi seçin.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('times', JSON.stringify(times));
+
+            try {
+                const res = await fetch(`${API_URL}/gallery`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+
+                if (res.ok) {
+                    closeGalleryModal();
+                    loadGallery();
+                } else {
+                    alert('Yükleme başarısız.');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        // Deprecated window.addNewCategory in favor of openCategoryModal
+        // window.addNewCategory = ... removed
+
+        window.deleteImage = async (src) => {
+            if (!confirm('Bu fotoğrafı silmek istediğinize emin misiniz?')) return;
+            try {
+                const res = await fetch(`${API_URL}/gallery`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ src })
+                });
+                if (res.ok) loadGallery();
+            } catch (err) { console.error(err); }
+        }
+
+    </script>
+
+    <div
+        style="position: fixed; bottom: 20px; right: 20px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-size: 13px; z-index: 1000; border-left: 5px solid #FFC700; font-family: 'Arial', sans-serif;">
+        <div style="font-weight: bold; margin-bottom: 8px; font-size: 14px; color: #333;">Teknik Destek</div>
+        <div style="border-top: 1px solid #eee; margin-bottom: 8px;"></div>
+        <div style="margin-bottom: 4px;"><strong>Lemar Menü Sistemi</strong></div>
+        <div style="margin-bottom: 4px; color: #666;">Geliştirici: Efkan Topcu</div>
+        <div>📞 <a href="tel:05444702651" style="text-decoration: none; color: #333; font-weight: bold;">0544 470
+                2651</a></div>
+    </div>
+</body>
+
+</html>

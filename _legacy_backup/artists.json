@@ -1,0 +1,79 @@
+[
+  {
+    "dayName": "Pazartesi",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Salı",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Çarşamba",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Perşembe",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Cuma",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Cumartesi",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  },
+  {
+    "dayName": "Pazar",
+    "artist1": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    },
+    "artist2": {
+      "name": "Sanatçı Bekleniyor",
+      "image": "uploads/default_artist.png"
+    }
+  }
+]
