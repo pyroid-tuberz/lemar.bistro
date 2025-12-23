@@ -269,6 +269,8 @@
                     <button onclick="switchTab('artists')">Sanatçılar</button>
                     <button onclick="switchTab('testimonials')">Müşteri Yorumları</button>
                     <button onclick="switchTab('background')">Arkaplan</button>
+                    <button onclick="logout()" style="background-color: #ff4444; color: white; margin-left: 10px;">Çıkış
+                        Yap</button>
                 </div>
             </div>
 
@@ -536,7 +538,7 @@
 
     <script>
         const API_URL = '/api';
-        let token = localStorage.getItem('adminToken');
+        let token = sessionStorage.getItem('adminToken');
         let menuData = { items: [], categories: {} };
 
         // DOM Elements
@@ -556,6 +558,13 @@
         // Login Logic
         if (token) showDashboard();
 
+        window.logout = () => {
+            if (confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+                sessionStorage.removeItem('adminToken');
+                window.location.reload();
+            }
+        };
+
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = e.target.username.value;
@@ -571,7 +580,7 @@
                 if (res.ok) {
                     const data = await res.json();
                     token = data.token;
-                    localStorage.setItem('adminToken', token);
+                    sessionStorage.setItem('adminToken', token);
                     showDashboard();
                 } else {
                     alert('Giriş başarısız!');
