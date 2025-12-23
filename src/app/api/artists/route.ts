@@ -59,10 +59,13 @@ export async function POST(request: Request) {
             }
         }
 
-        await writeJson('artists.json', data);
+        const success = await writeJson('artists.json', data);
+        if (!success) {
+            throw new Error('Write to file system failed');
+        }
         return NextResponse.json({ success: true, artist: data[dIdx][artistKey] });
     } catch (error) {
         console.error('Artist POST error:', error);
-        return NextResponse.json({ error: 'Failed to update artist' }, { status: 500 });
+        return NextResponse.json({ error: 'Failed to update artist (File System Read-Only?)' }, { status: 500 });
     }
 }
