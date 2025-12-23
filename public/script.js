@@ -461,13 +461,13 @@ function initApp() {
 
         // Artist 1 Card
         if (day.artist1 && day.artist1.name) {
-            const artist1Card = createArtistCard(day.artist1, 'Sahne 1', '#FF6B6B');
+            const artist1Card = createArtistCard(day.artist1, 'Canlı Kat', '#FF6B6B');
             dayContent.appendChild(artist1Card);
         }
 
         // Artist 2 Card
         if (day.artist2 && day.artist2.name) {
-            const artist2Card = createArtistCard(day.artist2, 'Sahne 2', '#4ECDC4');
+            const artist2Card = createArtistCard(day.artist2, 'Teras Kat', '#4ECDC4');
             dayContent.appendChild(artist2Card);
         }
 
