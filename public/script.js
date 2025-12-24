@@ -197,8 +197,8 @@ function initApp() {
         // Clear existing panels if any (to prevent duplicates on re-run)
         const existingPanels = menuSystem.querySelectorAll('.menu-panel');
         if (existingPanels.length === 0) {
-            console.log('Fetching menu.json...');
-            fetch('/menu.json')
+            console.log('Fetching menu from API...');
+            fetch('/api/menu')
                 .then(res => {
                     if (!res.ok) throw new Error('Menu fetch failed');
                     return res.json();
@@ -329,8 +329,8 @@ function initApp() {
         // Clear previous content
         galleryGrid.innerHTML = '';
 
-        console.log('Fetching gallery.json...');
-        fetch('/gallery.json')
+        console.log('Fetching gallery from API...');
+        fetch('/api/gallery')
             .then(res => res.json())
             .then(data => {
                 const images = data.images || [];
