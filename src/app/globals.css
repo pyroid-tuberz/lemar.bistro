@@ -346,7 +346,8 @@ body {
   z-index: 1;
   border-radius: 20px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.75);
+  /* Slightly darker for better contrast */
   /* Glass Effect */
   backdrop-filter: blur(25px);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -537,8 +538,16 @@ body {
 
 /* Mobile Optimizations */
 @media (max-width: 768px) {
+  #menu-section {
+    padding: 40px 10px;
+    /* Reduced side padding so menu can be wider */
+  }
+
   .menu-system {
     height: 95vh;
+    max-width: 100%;
+    /* Take full available width */
+    margin: 0;
   }
 
   .panel-title {
@@ -547,34 +556,43 @@ body {
   }
 
   .main-menu {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* 2 Column Grid */
+    gap: 12px;
     padding: 10px;
+    justify-content: stretch;
   }
 
   .main-menu .nav-button {
     height: auto;
-    width: auto;
-    min-width: 140px;
-    padding: 12px 15px;
-    font-size: 0.85rem;
+    width: 100%;
+    /* Fill the grid cell */
+    min-width: 0;
+    padding: 20px 10px;
+    /* More vertical padding for taller buttons */
+    font-size: 0.95rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
   .menu-panel {
-    padding: 20px;
+    padding: 15px;
     top: 60px;
     height: calc(100% - 60px);
   }
 
   .search-container {
-    padding: 15px 20px 5px 20px;
+    padding: 15px 15px 5px 15px;
   }
 
-  /* Sub-menu buttons full width */
-  .menu-panel:not([data-panel-id="root"]) .nav-button {
-    width: 100%;
+  /* Sub-menu buttons full width or grid */
+  .menu-panel:not([data-panel-id="root"]) .main-menu {
+    grid-template-columns: 1fr;
+    /* Submenus can stay single column or keep 2 col? User usually wants categories in 2 col. */
   }
 
   .menu-back-button {

@@ -266,7 +266,23 @@ function initApp() {
                         if (hierarchy[catId]) {
                             const subCatGrid = document.createElement('div');
                             subCatGrid.className = 'main-menu';
-                            hierarchy[catId].forEach(subId => {
+
+                            // Custom priority sorting
+                            const priorityMap = {
+                                'yi-yecek-ler': 1,
+                                'i-ce-cek-ler': 2,
+                                'tatli-lar': 3,
+                                'nargi-le': 4,
+                                'mezeler': 50 // Mezes at the very bottom
+                            };
+
+                            const sortedSubIds = [...hierarchy[catId]].sort((a, b) => {
+                                const pA = priorityMap[a.toLowerCase()] || 10;
+                                const pB = priorityMap[b.toLowerCase()] || 10;
+                                return pA - pB;
+                            });
+
+                            sortedSubIds.forEach(subId => {
                                 const subCat = categories[subId];
                                 const btn = document.createElement('button');
                                 btn.className = 'nav-button';
