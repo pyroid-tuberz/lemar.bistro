@@ -1,5 +1,5 @@
 :root {
-  --primary: #f5c16c;
+  --primary: #8FAF3C;
   --bg-glass: rgba(0, 0, 0, 0.55);
   --card-glass: rgba(255, 255, 255, 0.08);
   --card-glass-hover: rgba(255, 255, 255, 0.15);
@@ -40,20 +40,22 @@ body {
 
 .header h1 {
   font-family: 'Playfair Display', serif;
-  /* Matching new design */
-  font-size: clamp(3rem, 15vw, 7rem);
+  font-size: clamp(4rem, 18vw, 9rem);
+  /* Enlarged */
   margin: 0;
   font-weight: 700;
-  color: #8FAF3C;
+  color: var(--primary);
   filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
 }
 
 .subtitle {
   text-align: center;
-  margin-top: 10px;
-  opacity: 0.8;
-  font-size: 1.2rem;
+  margin-top: 15px;
+  opacity: 0.9;
+  font-size: 1.8rem;
+  /* Enlarged */
   color: #FFFFFF;
+  font-weight: 500;
 }
 
 @keyframes titleFloat {
@@ -69,20 +71,19 @@ body {
 }
 
 .menu-button {
-  padding: 15px 35px;
-  /* Increased padding */
-  margin-top: 30px;
+  padding: 18px 45px;
+  margin-top: 40px;
   background-color: transparent;
-  color: #FFC700;
-  border: 2px solid #FFC700;
+  color: var(--primary);
+  border: 2.5px solid var(--primary);
   border-radius: 50px;
   cursor: pointer;
-  font-size: 1.3rem;
-  /* Increased font-size */
-  font-weight: 600;
+  font-size: 1.6rem;
+  /* Enlarged */
+  font-weight: 700;
   text-decoration: none;
   transition: all 0.3s ease;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
 }
 
 .menu-button:hover {
