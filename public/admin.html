@@ -1006,7 +1006,18 @@
             tableBody.innerHTML = '';
             items.forEach(item => {
                 const row = document.createElement('tr');
-                const catName = menuData.categories[item.category]?.name || menuData.categories[item.category];
+                // Robust lookup: handle casing and '-list' suffixes
+                const itemCat = item.category ? item.category.toLowerCase() : '';
+                let catData = menuData.categories[itemCat] || menuData.categories[item.category];
+
+                if (!catData) {
+                    // Try with/without -list suffix
+                    const altCatId = itemCat.endsWith('-list') ? itemCat.replace('-list', '') : itemCat + '-list';
+                    catData = menuData.categories[altCatId];
+                }
+
+                const catName = catData?.name || catData || 'Bilinmiyor';
+
                 row.innerHTML = `
                     <td data-label="Ürün Adı">${item.name}</td>
                     <td data-label="Kategori">${catName}</td>
@@ -1044,7 +1055,22 @@
 
         window.editItem = (item) => {
             document.getElementById('item-id').value = item.id;
-            document.getElementById('item-category').value = item.category;
+            // Ensure select value matches even if casing or suffix differs
+            const catSelect = document.getElementById('item-category');
+            const targetVal = item.category ? item.category.toLowerCase() : '';
+            const altTargetVal = targetVal.endsWith('-list') ? targetVal.replace('-list', '') : targetVal + '-list';
+
+            let matched = false;
+            for (let opt of catSelect.options) {
+                const optVal = opt.value.toLowerCase();
+                if (optVal === targetVal || optVal === altTargetVal) {
+                    catSelect.value = opt.value;
+                    matched = true;
+                    break;
+                }
+            }
+            if (!matched) catSelect.value = item.category;
+
             document.getElementById('item-name').value = item.name;
             document.getElementById('item-description').value = item.description || '';
             document.getElementById('item-price').value = item.price;

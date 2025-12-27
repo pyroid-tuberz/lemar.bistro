@@ -693,16 +693,10 @@ body {
 }
 
 /* Dynamic backgrounds are set via script.js */
-.sabah {
-  /* background-image: url('/sabah.png'); */
-}
-
-.oglen {
-  /* background-image: url('/oglen.jpg'); */
-}
-
+.sabah,
+.oglen,
 .aksam {
-  /* background-image: url('/aksam.jpg'); */
+  /* These classes are applied to body for time-based logic if needed */
 }
 
 /* Snowflake styles */

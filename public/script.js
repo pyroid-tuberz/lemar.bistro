@@ -247,7 +247,13 @@ function initApp() {
 
                     Object.keys(categories).forEach(catId => {
                         const cat = categories[catId];
-                        const panelItems = items.filter(i => i.category === catId);
+                        // Robust filtering: compare IDs in lowercase and handle common suffixes like '-list'
+                        const panelItems = items.filter(i => {
+                            if (!i.category) return false;
+                            const itemCat = i.category.toLowerCase();
+                            const targetCat = catId.toLowerCase();
+                            return itemCat === targetCat || itemCat === targetCat + '-list' || targetCat === itemCat + '-list';
+                        });
 
                         const panel = document.createElement('div');
                         panel.className = 'menu-panel';
@@ -307,8 +313,8 @@ function initApp() {
                                 return;
                             }
 
-                            const results = items.filter(item =>
-                                item.name.toLowerCase().includes(query) ||
+                            const results = (items || []).filter(item =>
+                                (item.name && item.name.toLowerCase().includes(query)) ||
                                 (item.description && item.description.toLowerCase().includes(query))
                             );
 

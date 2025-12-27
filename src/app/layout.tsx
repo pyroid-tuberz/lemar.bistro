@@ -15,13 +15,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
+    <html lang="tr" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         {/* External CSS link removed in favor of globals.css imports, but re-adding fonts here for safety if imports fail or for faster loading */}
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {children}
       </body>
     </html>
