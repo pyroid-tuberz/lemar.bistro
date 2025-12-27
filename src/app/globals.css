@@ -579,6 +579,11 @@ body {
     text-align: center;
   }
 
+  .main-menu .nav-button.long-text {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+  }
+
   .menu-panel {
     padding: 15px;
     top: 60px;

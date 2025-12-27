@@ -272,8 +272,11 @@ function initApp() {
                                 'yi-yecek-ler': 1,
                                 'i-ce-cek-ler': 2,
                                 'tatli-lar': 3,
-                                'nargi-le': 4,
-                                'mezeler': 50 // Mezes at the very bottom
+                                'kla-sik-ler': 4,
+                                'klasikler': 4,
+                                'nargi-le': 5,
+                                'nargile': 5,
+                                'mezeler': 50
                             };
 
                             const sortedSubIds = [...hierarchy[catId]].sort((a, b) => {
@@ -286,6 +289,9 @@ function initApp() {
                                 const subCat = categories[subId];
                                 const btn = document.createElement('button');
                                 btn.className = 'nav-button';
+                                if (subCat.name && subCat.name.length > 9) {
+                                    btn.classList.add('long-text');
+                                }
                                 btn.style.borderColor = subCat.color || 'var(--primary)';
                                 btn.style.color = subCat.color || 'var(--primary)';
                                 btn.innerHTML = `<span>${subCat.name}</span>`;
