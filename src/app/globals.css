@@ -614,16 +614,17 @@ body {
   height: 28px;
 }
 
+/* Dynamic backgrounds are set via script.js */
 .sabah {
-  background-image: url('/sabah.png');
+  /* background-image: url('/sabah.png'); */
 }
 
 .oglen {
-  background-image: url('/oglen.jpg');
+  /* background-image: url('/oglen.jpg'); */
 }
 
 .aksam {
-  background-image: url('/aksam.jpg');
+  /* background-image: url('/aksam.jpg'); */
 }
 
 /* Snowflake styles */

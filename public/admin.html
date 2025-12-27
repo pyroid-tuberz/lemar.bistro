@@ -798,11 +798,13 @@
         // --- BACKGROUND LOGIC ---
         async function loadBackgrounds() {
             try {
-                const res = await fetch(`${API_URL}/backgrounds`);
+                const res = await fetch(`${API_URL}/backgrounds?t=${Date.now()}`);
+                if (!res.ok) throw new Error('Failed to load backgrounds');
                 const data = await res.json();
-                document.getElementById('bg-img-sabah').src = data.sabah;
-                document.getElementById('bg-img-oglen').src = data.oglen;
-                document.getElementById('bg-img-aksam').src = data.aksam;
+                console.log('Backgrounds data loaded:', data);
+                document.getElementById('bg-img-sabah').src = data.sabah || 'sabah.png';
+                document.getElementById('bg-img-oglen').src = data.oglen || 'oglen.jpg';
+                document.getElementById('bg-img-aksam').src = data.aksam || 'aksam.jpg';
 
                 // Populate times
                 const times = data.times || { sabah: 6, oglen: 12, aksam: 18 };
@@ -855,7 +857,10 @@
                 if (res.ok) {
                     alert('Arkaplan güncellendi!');
                     loadBackgrounds();
-                } else { alert('Hata oluştu'); }
+                } else {
+                    const errData = await res.json();
+                    alert('Hata oluştu: ' + (errData.error || 'Bilinmeyen hata'));
+                }
             } catch (err) { console.error(err); }
         }
 

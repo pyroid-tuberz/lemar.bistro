@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { readJson, writeJson, checkAuth } from '@/lib/db';
 import { saveFile } from '@/lib/upload';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
     if (!checkAuth(request)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -12,6 +14,9 @@ export async function POST(request: Request) {
         const timeSlot = formData.get('timeSlot') as string;
         const file = formData.get('image') as File | null;
 
+        console.log('Background update request for:', timeSlot);
+        if (file) console.log('File received:', file.name, file.size);
+
         if (!['sabah', 'oglen', 'aksam'].includes(timeSlot)) {
             return NextResponse.json({ error: 'Invalid time slot' }, { status: 400 });
         }
@@ -20,13 +25,20 @@ export async function POST(request: Request) {
         }
 
         const savedPath = await saveFile(file);
-        let data = await readJson('backgrounds.json') || {};
 
-        data[timeSlot] = savedPath;
-        await writeJson('backgrounds.json', data);
+        let existingData = await readJson('backgrounds.json') || {};
+        const updatedData = {
+            ...existingData,
+            [timeSlot]: savedPath
+        };
 
-        return NextResponse.json({ success: true, backgrounds: data });
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to update background' }, { status: 500 });
+        const success = await writeJson('backgrounds.json', updatedData);
+        if (!success) throw new Error('Failed to save to database');
+
+        console.log('Successfully updated background for:', timeSlot);
+        return NextResponse.json({ success: true, backgrounds: updatedData });
+    } catch (error: any) {
+        console.error('Update Error:', error);
+        return NextResponse.json({ error: error.message || 'Failed' }, { status: 500 });
     }
 }

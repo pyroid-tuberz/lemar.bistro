@@ -112,33 +112,61 @@ function initApp() {
 
     // --- Dynamic Background Logic ---
     const body = document.body;
-    const currentHour = new Date().getHours();
-    let timeSlot = 'aksam';
 
-    if (currentHour >= 6 && currentHour < 12) {
-        timeSlot = 'sabah';
-        body.classList.add('sabah');
-    }
-    else if (currentHour >= 12 && currentHour < 18) {
-        timeSlot = 'oglen';
-        body.classList.add('oglen');
-    }
-    else {
-        body.classList.add('aksam');
-    }
-
-    // Fetch from backgrounds.json
-    fetch('/backgrounds.json')
+    // Fetch from API
+    console.log('Fetching backgrounds from API...');
+    fetch('/api/backgrounds?t=' + Date.now())
         .then(res => {
             if (!res.ok) throw new Error('Backgrounds fetch failed');
             return res.json();
         })
-        .then(bgData => {
-            if (bgData && bgData[timeSlot]) {
-                body.style.backgroundImage = `url('${bgData[timeSlot]}')`;
+        .then(data => {
+            const times = data.times || { sabah: 6, oglen: 12, aksam: 18 };
+            const currentHour = new Date().getHours();
+            let timeSlot = 'aksam';
+
+            // Dynamic Time Slot Determination
+            if (currentHour >= times.sabah && currentHour < times.oglen) {
+                timeSlot = 'sabah';
+            } else if (currentHour >= times.oglen && currentHour < times.aksam) {
+                timeSlot = 'oglen';
+            } else {
+                timeSlot = 'aksam';
             }
+
+            // Remove previous classes
+            body.classList.remove('sabah', 'oglen', 'aksam');
+            body.classList.add(timeSlot);
+
+            if (data[timeSlot]) {
+                const bgUrl = data[timeSlot];
+                console.log('Applying Background:', timeSlot, bgUrl);
+                body.style.backgroundImage = `url('${bgUrl}')`;
+
+                // Force a test color if it's still not working (debugging)
+                // body.style.border = '10px solid red'; 
+            } else {
+                console.warn('No background URL found for slot:', timeSlot);
+            }
+            console.log(`Current Time Slot: ${timeSlot} (Start: ${times[timeSlot]}:00)`);
         })
-        .catch(err => console.error('Background fetch error:', err));
+        .catch(err => {
+            console.error('Background fetch error:', err);
+            // Fallback classes if API fails
+            const currentHour = new Date().getHours();
+            if (currentHour >= 6 && currentHour < 12) {
+                body.classList.add('sabah');
+                body.style.backgroundImage = "url('/sabah.png')";
+            }
+            else if (currentHour >= 12 && currentHour < 18) {
+                body.classList.add('oglen');
+                body.style.backgroundImage = "url('/oglen.jpg')";
+            }
+            else {
+                body.classList.add('aksam');
+                body.style.backgroundImage = "url('/aksam.jpg')";
+            }
+        });
 
     // --- NAVIGATION LOGIC (Persistent) ---
     const navBar = document.getElementById('menu-nav-bar');
