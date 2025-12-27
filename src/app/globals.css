@@ -44,7 +44,7 @@ body {
   font-size: clamp(3rem, 15vw, 7rem);
   margin: 0;
   font-weight: 700;
-  color: var(--primary);
+  color: #8FAF3C;
   filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
 }
 
