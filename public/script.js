@@ -140,8 +140,8 @@ function initApp() {
 
             if (data[timeSlot]) {
                 const bgUrl = data[timeSlot];
-                console.log('Applying Background:', timeSlot, bgUrl);
-                body.style.backgroundImage = `url('${bgUrl}')`;
+                console.log('Applying Background with Overlay:', timeSlot, bgUrl);
+                body.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('${bgUrl}')`;
 
                 // Force a test color if it's still not working (debugging)
                 // body.style.border = '10px solid red'; 

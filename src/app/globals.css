@@ -35,17 +35,29 @@ body {
   text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
   position: relative;
   background-position: center;
-  /* Added for mobile optimization */
+  /* Dark overlay logic is handled via dynamic background in script.js or below */
 }
 
 .header h1 {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(4rem, 18vw, 9rem);
-  /* Enlarged */
+  font-size: clamp(4rem, 15vw, 8rem);
   margin: 0;
-  font-weight: 700;
-  color: var(--primary);
-  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+  color: #E6C068;
+  /* Golden Yellow */
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  line-height: 0.9;
+}
+
+.thin {
+  font-weight: 300;
+  font-size: 0.6em;
+  display: block;
+}
+
+.bold {
+  font-weight: 800;
+  letter-spacing: 2px;
+  display: block;
 }
 
 .subtitle {
