@@ -264,8 +264,8 @@ function initApp() {
                                 const subCat = categories[subId];
                                 const btn = document.createElement('button');
                                 btn.className = 'nav-button';
-                                btn.style.borderColor = subCat.color || '#FFC700';
-                                btn.style.color = subCat.color || '#FFC700';
+                                btn.style.borderColor = subCat.color || 'var(--primary)';
+                                btn.style.color = subCat.color || 'var(--primary)';
                                 btn.innerHTML = `<span>${subCat.name}</span>`;
                                 btn.onclick = () => navigateTo(subId);
                                 subCatGrid.appendChild(btn);
@@ -274,19 +274,19 @@ function initApp() {
                         }
 
                         if (panelItems.length > 0) {
-                            panel.classList.add('menu-item-list');
+                            const grid = document.createElement('div');
+                            grid.className = 'menu-grid'; // Use the new grid from design
                             panelItems.forEach(item => {
                                 const itemDiv = document.createElement('div');
-                                itemDiv.className = 'menu-item';
+                                itemDiv.className = 'card'; // Use the new card class
                                 itemDiv.innerHTML = `
-                                    <div class="menu-item-header">
-                                        <span class="menu-item-name">${item.name}</span>
-                                        <span class="menu-item-price">${item.price}</span>
-                                    </div>
-                                    ${item.description ? `<div class="menu-item-description">${item.description}</div>` : ''}
+                                    <h3>${item.name}</h3>
+                                    ${item.description ? `<p>${item.description}</p>` : ''}
+                                    <span>${item.price}</span>
                                 `;
-                                panel.appendChild(itemDiv);
+                                grid.appendChild(itemDiv);
                             });
+                            panel.appendChild(grid);
                         }
                         menuSystem.appendChild(panel);
                     });
@@ -319,20 +319,21 @@ function initApp() {
                             searchPanel.innerHTML = `<h2 class="panel-title">Arama Sonuçları</h2>`;
 
                             if (results.length > 0) {
-                                searchPanel.classList.add('menu-item-list');
+                                const grid = document.createElement('div');
+                                grid.className = 'menu-grid';
                                 results.forEach(item => {
                                     const itemDiv = document.createElement('div');
-                                    itemDiv.className = 'menu-item';
+                                    itemDiv.className = 'card';
                                     itemDiv.innerHTML = `
-                                        <div class="menu-item-header">
-                                            <span class="menu-item-name">${item.name}</span>
-                                            <span class="menu-item-price">${item.price}</span>
-                                        </div>
-                                        ${item.description ? `<div class="menu-item-description">${item.description}</div>` : ''}
+                                        <h3>${item.name}</h3>
+                                        ${item.description ? `<p>${item.description}</p>` : ''}
+                                        <span>${item.price}</span>
                                     `;
-                                    searchPanel.appendChild(itemDiv);
+                                    grid.appendChild(itemDiv);
                                 });
-                            } else {
+                                searchPanel.appendChild(grid);
+                            }
+                            else {
                                 searchPanel.innerHTML += `<p style="text-align:center; color:white;">Sonuç bulunamadı.</p>`;
                             }
                             menuSystem.appendChild(searchPanel);
