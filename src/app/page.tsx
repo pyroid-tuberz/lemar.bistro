@@ -22,7 +22,7 @@ export default function Home() {
             <a href="#about-section" data-key="nav_about">Hakkımızda</a>
           </div>
         </nav>
-        <h1 data-key="welcome_title" style={{ fontSize: '42px', color: 'var(--primary)' }}>Lemara Hoşgeldiniz</h1>
+        <h1 data-key="welcome_title" style={{ fontSize: '42px', color: '#8FAF3C' }}>Lemara Hoşgeldiniz</h1>
         <p className="subtitle" style={{ fontSize: '18px', opacity: 0.8 }}>Lezzetin en koyu hali</p>
         <a href="#menu-section" className="menu-button" data-key="discover_menu">Menümüzü Keşfedin</a>
       </div>
