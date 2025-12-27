@@ -190,7 +190,8 @@ body {
 .content-section {
   background-color: var(--bg-glass);
   backdrop-filter: blur(var(--blur));
-  padding: 80px 20px;
+  padding: clamp(40px, 8vw, 80px) 20px;
+  /* Responsive padding */
   border-radius: 20px;
   margin: 20px auto;
   max-width: 1200px;
@@ -204,9 +205,12 @@ body {
 
 .section-title {
   font-family: 'Playfair Display', serif;
-  font-size: 3rem;
+  font-size: clamp(2.2rem, 8vw, 3.5rem);
+  /* Responsive font size */
   color: var(--primary);
   margin-bottom: 40px;
+  line-height: 1.2;
+  word-wrap: break-word;
 }
 
 .section-paragraph {

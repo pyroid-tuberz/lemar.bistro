@@ -14,12 +14,11 @@ export default function Home() {
             <span className="hamburger-bar"></span>
           </button>
           <div className="nav-links">
-            <a href="#featured-section" data-key="nav_featured">Öne Çıkanlar</a>
+            <a href="#about-section" data-key="nav_about">Hakkımızda</a>
             <a href="#menu-section" data-key="nav_menu">Menü</a>
             <a href="#artists-section" data-key="nav_artists">Sanatçılar</a>
             <a href="#gallery-section" data-key="nav_gallery">Galeri</a>
             <a href="#contact-section" data-key="nav_contact">İletişim</a>
-            <a href="#about-section" data-key="nav_about">Hakkımızda</a>
           </div>
         </nav>
         <h1 data-key="welcome_title">
@@ -40,8 +39,6 @@ export default function Home() {
           </p>
         </div>
       </section>
-
-      <div className="section-divider"></div>
 
       <div className="section-divider"></div>
 
