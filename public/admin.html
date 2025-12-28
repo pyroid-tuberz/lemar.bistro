@@ -459,12 +459,20 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Ürün Adı</label>
+                    <label>Ürün Adı (TR)</label>
                     <input type="text" id="item-name" required>
                 </div>
                 <div class="form-group">
-                    <label>Açıklama</label>
+                    <label>Ürün Adı (EN)</label>
+                    <input type="text" id="item-name-en" placeholder="Product Name (EN)">
+                </div>
+                <div class="form-group">
+                    <label>Açıklama (TR)</label>
                     <textarea id="item-description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Açıklama (EN)</label>
+                    <textarea id="item-description-en" rows="3" placeholder="Description (EN)"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -485,8 +493,12 @@
             <form id="category-form">
                 <input type="hidden" id="cat-id">
                 <div class="form-group">
-                    <label>Kategori Adı</label>
+                    <label>Kategori Adı (TR)</label>
                     <input type="text" id="cat-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Kategori Adı (EN)</label>
+                    <input type="text" id="cat-name-en" placeholder="Category Name (EN)">
                 </div>
                 <div class="form-group">
                     <label>Üst Menü (Parent)</label>
@@ -929,6 +941,7 @@
         window.openCategoryModal = () => {
             catForm.reset();
             document.getElementById('cat-id').value = '';
+            document.getElementById('cat-name-en').value = ''; // Reset EN field
             populateParentSelect();
             catModal.style.display = 'block';
         };
@@ -941,6 +954,7 @@
             const data = menuData.categories[id];
             document.getElementById('cat-id').value = id;
             document.getElementById('cat-name').value = data.name;
+            document.getElementById('cat-name-en').value = data.name_en || ''; // Populate EN field
             populateParentSelect();
             document.getElementById('cat-parent').value = data.parent || 'root';
             document.getElementById('cat-color').value = data.color || '#FFC700';
@@ -984,6 +998,7 @@
             const payload = {
                 id: id,
                 name: document.getElementById('cat-name').value,
+                name_en: document.getElementById('cat-name-en').value,
                 parent: document.getElementById('cat-parent').value,
                 color: document.getElementById('cat-color').value,
                 size: document.getElementById('cat-size').value
@@ -1045,6 +1060,8 @@
         window.openModal = () => {
             itemForm.reset();
             document.getElementById('item-id').value = '';
+            document.getElementById('item-name-en').value = '';
+            document.getElementById('item-description-en').value = '';
             document.getElementById('modal-title').textContent = 'Ürün Ekle';
             modal.style.display = 'block';
         };
@@ -1072,7 +1089,9 @@
             if (!matched) catSelect.value = item.category;
 
             document.getElementById('item-name').value = item.name;
+            document.getElementById('item-name-en').value = item.name_en || '';
             document.getElementById('item-description').value = item.description || '';
+            document.getElementById('item-description-en').value = item.description_en || '';
             document.getElementById('item-price').value = item.price;
 
             document.getElementById('modal-title').textContent = 'Ürün Düzenle';
@@ -1092,7 +1111,9 @@
                 id: document.getElementById('item-id').value || null,
                 category: document.getElementById('item-category').value,
                 name: document.getElementById('item-name').value,
+                name_en: document.getElementById('item-name-en').value,
                 description: document.getElementById('item-description').value,
+                description_en: document.getElementById('item-description-en').value,
                 price: price
             };
 
