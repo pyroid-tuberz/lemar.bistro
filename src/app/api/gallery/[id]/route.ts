@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server';
 import { readJson, writeJson, checkAuth } from '@/lib/db';
 import { supabase } from '@/lib/supabase'; // Import supabase client
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
     if (!checkAuth(request)) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     try {
-        const { id } = params;
+        const { id } = await params;
         if (!id) {
             return NextResponse.json({ error: 'Image ID is required' }, { status: 400 });
         }
