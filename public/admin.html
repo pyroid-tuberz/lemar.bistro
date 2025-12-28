@@ -1150,7 +1150,7 @@
                 div.style.position = 'relative';
                 div.innerHTML = `
                     <img src="${img.src}" style="width:100%; height:100px; object-fit:cover; border-radius:4px;">
-                    <button onclick="deleteImage('${img.src}')" style="position:absolute; top:5px; right:5px; background:red; color:white; border:none; border-radius:3px; cursor:pointer;">X</button>
+                    <button onclick="deleteImage('${img.id}')" style="position:absolute; top:5px; right:5px; background:red; color:white; border:none; border-radius:3px; cursor:pointer;">X</button>
                     <div style="font-size:10px; margin-top:2px;">${img.times.join(', ')}</div>
                 `;
                 galleryGrid.appendChild(div);
@@ -1207,16 +1207,14 @@
         // Deprecated window.addNewCategory in favor of openCategoryModal
         // window.addNewCategory = ... removed
 
-        window.deleteImage = async (src) => {
+        window.deleteImage = async (id) => {
             if (!confirm('Bu fotoğrafı silmek istediğinize emin misiniz?')) return;
             try {
-                const res = await fetch(`${API_URL}/gallery`, {
+                const res = await fetch(`${API_URL}/gallery/${id}`, {
                     method: 'DELETE',
                     headers: {
-                        'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ src })
+                    }
                 });
                 if (res.ok) loadGallery();
             } catch (err) { console.error(err); }

@@ -23,6 +23,7 @@ export async function POST(request: Request) {
         const times = JSON.parse(timesStr);
 
         const newImage = {
+            id: Date.now().toString(36), // Add unique ID
             src: savedPath, // saveFile returns 'uploads/filename.jpg'
             times: times
         };
@@ -38,21 +39,4 @@ export async function POST(request: Request) {
     }
 }
 
-export async function DELETE(request: Request) {
-    if (!checkAuth(request)) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
 
-    try {
-        const body = await request.json();
-        const { src } = body;
-        const data = await readJson('gallery.json') || { images: [] };
-
-        data.images = data.images.filter((img: any) => img.src !== src);
-
-        await writeJson('gallery.json', data);
-        return NextResponse.json({ success: true });
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to delete gallery item' }, { status: 500 });
-    }
-}

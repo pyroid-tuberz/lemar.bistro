@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readJson, writeJson, checkAuth } from '@/lib/db';
 import { saveFile } from '@/lib/upload';
+import { supabase } from '@/lib/supabase'; // Import supabase
 
 export async function GET() {
     const data = await readJson('artists.json');
@@ -45,19 +46,32 @@ export async function POST(request: Request) {
         }
 
         const artistKey = `artist${slot}` as 'artist1' | 'artist2';
-        if (name) data[dIdx][artistKey].name = name;
-
-        // Only save file if it has content
+        
+        // If a new file is uploaded, delete the old one first
         if (file && file.size > 0) {
+            const oldImageUrl = data[dIdx][artistKey].image;
+            if (oldImageUrl && !oldImageUrl.includes('default_artist.png')) {
+                const oldFilename = oldImageUrl.substring(oldImageUrl.lastIndexOf('/') + 1);
+                if (oldFilename) {
+                    const { error: deleteError } = await supabase.storage
+                        .from('lemar-uploads')
+                        .remove([oldFilename]);
+                    if (deleteError) {
+                        console.warn(`Supabase delete warning for old artist image ${oldFilename}: ${deleteError.message}`);
+                    }
+                }
+            }
+            
+            // Now save the new file
             try {
                 const savedPath = await saveFile(file);
                 data[dIdx][artistKey].image = savedPath;
             } catch (fileErr) {
                 console.error('File save error:', fileErr);
-                // Continue saving name even if image fails? 
-                // Better to throw so user knows something went wrong, or just log it.
             }
         }
+        
+        if (name) data[dIdx][artistKey].name = name;
 
         const success = await writeJson('artists.json', data);
         if (!success) {

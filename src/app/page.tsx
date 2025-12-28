@@ -1,11 +1,43 @@
-'use client';
-
 import Image from "next/image";
 import Script from "next/script";
+import { readJson } from "@/lib/db";
+import MenuSystem from "@/components/MenuSystem";
+import Gallery from "@/components/Gallery";
+import Artists from "@/components/Artists";
+import Testimonials from "@/components/Testimonials";
 
-export default function Home() {
+export const revalidate = 60;
+
+export default async function Home() {
+  // Pre-fetch all data on the server in parallel
+  const [menuData, bgData, galleryData, artistsData, testimonialData] = await Promise.all([
+    readJson('menu.json') || { items: [], categories: {} },
+    readJson('backgrounds.json') || { sabah: "sabah.png", oglen: "oglen.jpg", aksam: "aksam.jpg", times: { sabah: 6, oglen: 12, aksam: 18 } },
+    readJson('gallery.json') || { images: [] },
+    readJson('artists.json') || [],
+    readJson('testimonials.json') || []
+  ]);
+
+  // Determine background based on server time
+  const currentHour = new Date().getHours();
+  const times = bgData.times || { sabah: 6, oglen: 12, aksam: 18 };
+  let timeSlot = 'aksam';
+  if (currentHour >= times.sabah && currentHour < times.oglen) timeSlot = 'sabah';
+  else if (currentHour >= times.oglen && currentHour < times.aksam) timeSlot = 'oglen';
+
+  const bgUrl = bgData[timeSlot] || (timeSlot === 'sabah' ? 'sabah.png' : timeSlot === 'oglen' ? 'oglen.jpg' : 'aksam.jpg');
+
+  // Filter gallery images by time slot
+  const filteredGallery = (galleryData.images || []).filter((img: any) => img.times.includes(timeSlot));
+
   return (
-    <>
+    <div className={timeSlot} style={{
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/${bgUrl}')`,
+      backgroundAttachment: 'fixed',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      minHeight: '100vh'
+    }}>
       <div className="header">
         <nav className="main-nav">
           <button className="hamburger" id="hamburger-menu">
@@ -43,22 +75,7 @@ export default function Home() {
       <div className="section-divider"></div>
 
       <section id="menu-section">
-        <div className="menu-system">
-          {/* Search Bar */}
-          <div className="search-container">
-            <input type="text" id="search-input" placeholder="Ürün Ara... (Örn: Votka, Burger)"
-              data-key-placeholder="search_placeholder" />
-          </div>
-
-          {/* Persistent Navigation Bar */}
-          <div id="menu-nav-bar"
-            style={{ display: 'none', padding: '0 20px 10px 20px', gap: '10px', zIndex: 100, position: 'relative' }}>
-            <button id="btn-back" className="nav-control-btn" data-key="btn_back">← Geri</button>
-            <button id="btn-home" className="nav-control-btn" data-key="btn_home">⌂ Ana Menü</button>
-          </div>
-
-          {/* Dynamic Menu Injected Here */}
-        </div>
+        <MenuSystem initialData={menuData} />
       </section>
 
       <div className="section-divider"></div>
@@ -66,9 +83,7 @@ export default function Home() {
       <section id="artists-section" className="content-section scroll-animate">
         <div className="section-container">
           <h2 className="section-title" data-key="artists_title">Sanatçılar</h2>
-          <div className="artist-grid" id="artist-display-grid">
-            {/* Dynamically loaded from server */}
-          </div>
+          <Artists weekData={artistsData} />
         </div>
       </section>
 
@@ -77,9 +92,7 @@ export default function Home() {
       <section id="gallery-section" className="content-section scroll-animate">
         <div className="section-container">
           <h2 className="section-title" data-key="gallery_title">Lezzetlerimizden Kareler</h2>
-          <div className="gallery-grid">
-            {/* Gallery is populated via script.js finding this div */}
-          </div>
+          <Gallery images={filteredGallery} />
         </div>
       </section>
 
@@ -88,9 +101,7 @@ export default function Home() {
       <section id="testimonial-section" className="content-section scroll-animate">
         <div className="section-container">
           <h2 className="section-title">Misafirlerimiz Ne Diyor?</h2>
-          <div className="testimonial-grid" id="testimonial-display-grid">
-            {/* Dynamically loaded from server */}
-          </div>
+          <Testimonials data={testimonialData} />
         </div>
       </section>
 
@@ -135,14 +146,6 @@ export default function Home() {
               <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
             </svg>
           </a>
-          <a href="#" aria-label="Twitter">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path
-                d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z">
-              </path>
-            </svg>
-          </a>
         </div>
         <p data-key="footer_rights">© 2025 Lemar Bistro. Tüm Hakları Saklıdır.</p>
         <a href="/admin" className="admin-link">Admin</a>
@@ -155,9 +158,8 @@ export default function Home() {
         </svg>
       </button>
 
-      {/* Load script.js from public folder */}
+      {/* Load script.js from public folder for remaining interactive logic */}
       <Script src="/script.js" strategy="afterInteractive" />
-    </>
+    </div>
   );
 }
-

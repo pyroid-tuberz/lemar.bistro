@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { readJson, writeJson, checkAuth } from '@/lib/db';
 import { saveFile } from '@/lib/upload';
+import { supabase } from '@/lib/supabase'; // Import supabase
 
 export const dynamic = 'force-dynamic';
 
@@ -14,9 +15,6 @@ export async function POST(request: Request) {
         const timeSlot = formData.get('timeSlot') as string;
         const file = formData.get('image') as File | null;
 
-        console.log('Background update request for:', timeSlot);
-        if (file) console.log('File received:', file.name, file.size);
-
         if (!['sabah', 'oglen', 'aksam'].includes(timeSlot)) {
             return NextResponse.json({ error: 'Invalid time slot' }, { status: 400 });
         }
@@ -24,9 +22,24 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'No image provided' }, { status: 400 });
         }
 
-        const savedPath = await saveFile(file);
-
         let existingData = await readJson('backgrounds.json') || {};
+
+        // Delete old image from Supabase if it exists
+        const oldImageUrl = existingData[timeSlot];
+        if (oldImageUrl && typeof oldImageUrl === 'string' && oldImageUrl.includes('supabase.co')) {
+            const oldFilename = oldImageUrl.substring(oldImageUrl.lastIndexOf('/') + 1);
+            if (oldFilename) {
+                const { error: deleteError } = await supabase.storage
+                    .from('lemar-uploads')
+                    .remove([oldFilename]);
+                if (deleteError) {
+                    console.warn(`Supabase delete warning for old background image ${oldFilename}: ${deleteError.message}`);
+                }
+            }
+        }
+
+        const savedPath = await saveFile(file);
+        
         const updatedData = {
             ...existingData,
             [timeSlot]: savedPath
@@ -35,10 +48,10 @@ export async function POST(request: Request) {
         const success = await writeJson('backgrounds.json', updatedData);
         if (!success) throw new Error('Failed to save to database');
 
-        console.log('Successfully updated background for:', timeSlot);
         return NextResponse.json({ success: true, backgrounds: updatedData });
     } catch (error: any) {
         console.error('Update Error:', error);
         return NextResponse.json({ error: error.message || 'Failed' }, { status: 500 });
     }
 }
+
