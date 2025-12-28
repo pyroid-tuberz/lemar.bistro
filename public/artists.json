@@ -1,78 +1,99 @@
 [
   {
     "dayName": "Pazartesi",
+    "dayName_en": "Monday",
     "artist1": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     },
     "artist2": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     }
   },
   {
     "dayName": "Salı",
+    "dayName_en": "Tuesday",
     "artist1": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     },
     "artist2": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     }
   },
   {
     "dayName": "Çarşamba",
+    "dayName_en": "Wednesday",
     "artist1": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     },
     "artist2": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     }
   },
   {
     "dayName": "Perşembe",
+    "dayName_en": "Thursday",
     "artist1": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     },
     "artist2": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     }
   },
   {
     "dayName": "Cuma",
+    "dayName_en": "Friday",
     "artist1": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     },
     "artist2": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     }
   },
   {
     "dayName": "Cumartesi",
+    "dayName_en": "Saturday",
     "artist1": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     },
     "artist2": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     }
   },
   {
     "dayName": "Pazar",
+    "dayName_en": "Sunday",
     "artist1": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     },
     "artist2": {
       "name": "Sanatçı Bekleniyor",
+      "name_en": "Artist Pending",
       "image": "uploads/default_artist.png"
     }
   }

@@ -46,28 +46,30 @@ export default async function Home() {
             <span className="hamburger-bar"></span>
           </button>
           <div className="nav-links">
-            <a href="#about-section" data-key="nav_about">Hakkımızda</a>
-            <a href="#menu-section" data-key="nav_menu">Menü</a>
-            <a href="#artists-section" data-key="nav_artists">Sanatçılar</a>
-            <a href="#gallery-section" data-key="nav_gallery">Galeri</a>
-            <a href="#contact-section" data-key="nav_contact">İletişim</a>
+            <a href="#about-section" data-key="nav_about">Hakkımızda / About Us</a>
+            <a href="#menu-section" data-key="nav_menu">Menü / Menu</a>
+            <a href="#artists-section" data-key="nav_artists">Sanatçılar / Artists</a>
+            <a href="#gallery-section" data-key="nav_gallery">Galeri / Gallery</a>
+            <a href="#contact-section" data-key="nav_contact">İletişim / Contact</a>
           </div>
         </nav>
         <h1 data-key="welcome_title">
           <span className="thin">Lemara</span><br />
-          <span className="bold">Hoşgeldiniz</span>
+          <span className="bold">Hoşgeldiniz / Welcome</span>
         </h1>
-        <p className="subtitle">Lezzetin en koyu hali</p>
-        <a href="#menu-section" className="menu-button" data-key="discover_menu">Menümüzü Keşfedin</a>
+        <p className="subtitle">Lezzetin en koyu hali / The darkest state of flavor</p>
+        <a href="#menu-section" className="menu-button" data-key="discover_menu">Menümüzü Keşfedin / Discover Our Menu</a>
       </div>
 
       <section id="about-section" className="content-section scroll-animate">
         <div className="section-container">
-          <h2 className="section-title" data-key="our_story_title">Bizim Hikayemiz</h2>
+          <h2 className="section-title" data-key="our_story_title">Bizim Hikayemiz / Our Story</h2>
           <p className="section-paragraph" data-key="our_story_text">
             2024 yılında lezzet tutkunları için kapılarını aralayan Lemar Bistro, en taze
             malzemelerle hazırlanan eşsiz menüsü, sıcak atmosferi ve kaliteli hizmet anlayışıyla kısa sürede şehrin
             buluşma noktası haline geldi. Her damak zevkine hitap eden zengin seçeneklerimizle sizleri bekliyoruz.
+            <br />
+            Lemar Bistro, which opened its doors in 2024 for taste enthusiasts, quickly became the meeting point of the city with its unique menu prepared with the freshest ingredients, warm atmosphere, and quality service approach. We are waiting for you with our rich options that appeal to every palate.
           </p>
         </div>
       </section>
@@ -82,7 +84,7 @@ export default async function Home() {
 
       <section id="artists-section" className="content-section scroll-animate">
         <div className="section-container">
-          <h2 className="section-title" data-key="artists_title">Sanatçılar</h2>
+          <h2 className="section-title" data-key="artists_title">Sanatçılar / Artists</h2>
           <Artists weekData={artistsData} />
         </div>
       </section>
@@ -91,7 +93,7 @@ export default async function Home() {
 
       <section id="gallery-section" className="content-section scroll-animate">
         <div className="section-container">
-          <h2 className="section-title" data-key="gallery_title">Lezzetlerimizden Kareler</h2>
+          <h2 className="section-title" data-key="gallery_title">Lezzetlerimizden Kareler / Frames from Our Delicacies</h2>
           <Gallery images={filteredGallery} />
         </div>
       </section>
@@ -100,7 +102,7 @@ export default async function Home() {
 
       <section id="testimonial-section" className="content-section scroll-animate">
         <div className="section-container">
-          <h2 className="section-title">Misafirlerimiz Ne Diyor?</h2>
+          <h2 className="section-title">Misafirlerimiz Ne Diyor? / What Our Guests Say?</h2>
           <Testimonials data={testimonialData} />
         </div>
       </section>
@@ -108,12 +110,12 @@ export default async function Home() {
       <div className="section-divider"></div>
       <section id="contact-section" className="content-section scroll-animate">
         <div className="section-container">
-          <h2 className="section-title" data-key="contact_title">Bize Ulaşın</h2>
+          <h2 className="section-title" data-key="contact_title">Bize Ulaşın / Contact Us</h2>
           <div className="contact-container">
             <div className="contact-info">
-              <h3 data-key="address_title">Adres</h3>
+              <h3 data-key="address_title">Adres / Address</h3>
               <p>Kınıklı, Hüseyin Yılmaz Cd. No:72, 20160 Denizli Merkez/Denizli</p>
-              <h3 data-key="phone_title">Telefon</h3>
+              <h3 data-key="phone_title">Telefon / Phone</h3>
               <p>+90 0542 534 45 18</p>
               <h3>Email</h3>
               <p>info@lemarbistro.com</p>
@@ -147,7 +149,7 @@ export default async function Home() {
             </svg>
           </a>
         </div>
-        <p data-key="footer_rights">© 2025 Lemar Bistro. Tüm Hakları Saklıdır.</p>
+        <p data-key="footer_rights">© 2025 Lemar Bistro. Tüm Hakları Saklıdır. / All Rights Reserved.</p>
         <a href="/admin" className="admin-link">Admin</a>
       </footer>
 
