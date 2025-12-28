@@ -580,8 +580,8 @@ body {
   }
 
   .main-menu .nav-button.long-text {
-    font-size: 0.8rem;
-    letter-spacing: 1px;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
   }
 
   .menu-panel {

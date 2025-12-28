@@ -270,12 +270,20 @@ function initApp() {
                             // Custom priority sorting
                             const priorityMap = {
                                 'yi-yecek-ler': 1,
+                                'yi-yecekler': 1,
+                                'yiyecekler': 1,
                                 'i-ce-cek-ler': 2,
+                                'i-cecekler': 2,
+                                'icecekler': 2,
                                 'tatli-lar': 3,
+                                'tatlilar': 3,
                                 'kla-sik-ler': 4,
+                                'kla-sikler': 4,
                                 'klasikler': 4,
                                 'nargi-le': 5,
                                 'nargile': 5,
+                                'atistirmaliklar': 6,
+                                'sepetler': 7,
                                 'mezeler': 50
                             };
 
@@ -289,7 +297,7 @@ function initApp() {
                                 const subCat = categories[subId];
                                 const btn = document.createElement('button');
                                 btn.className = 'nav-button';
-                                if (subCat.name && subCat.name.length > 9) {
+                                if (subCat.name && subCat.name.length >= 9) {
                                     btn.classList.add('long-text');
                                 }
                                 btn.style.borderColor = subCat.color || 'var(--primary)';
