@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { Providers } from "@/components/Providers";
 // import "./globals.css"; // Already imported by overwriting
 
-// Metadata can still be exported from a client component layout
 export const metadata: Metadata = {
   title: "Lemar Bistro - Denizli'nin Buluşma Noktası | Menü & Etkinlikler",
   description: "Denizli Kınıklı'da hizmet veren Lemar Bistro, zengin menüsü, sıcak atmosferi ve özel kokteylleri ile sizleri bekliyor. Kahvaltı, yemek ve eğlence için doğru adres.",
@@ -24,9 +22,7 @@ export default function RootLayout({
         {/* External CSS link removed in favor of globals.css imports, but re-adding fonts here for safety if imports fail or for faster loading */}
       </head>
       <body suppressHydrationWarning>
-        <Providers>
-          {children}
-        </Providers>
+        {children}
       </body>
     </html>
   );

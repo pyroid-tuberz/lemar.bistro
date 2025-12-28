@@ -4,27 +4,22 @@ import { useState } from 'react';
 
 interface Artist {
     name: string;
-    name_en?: string;
     image: string;
 }
 
 interface DayData {
     dayName: string;
-    dayName_en?: string;
     artist1?: Artist;
     artist2?: Artist;
 }
 
-export default function Artists({ weekData, lang }: { weekData: DayData[], lang: 'tr' | 'en' }) {
+export default function Artists({ weekData }: { weekData: DayData[] }) {
     const today = new Date();
     const todayDayIndex = (today.getDay() + 6) % 7;
     const [activeDayIndex, setActiveDayIndex] = useState(todayDayIndex);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const activeDay = weekData[activeDayIndex];
-
-    const getArtistName = (artist: Artist) => (lang === 'en' && artist.name_en) ? artist.name_en : artist.name;
-    const getDayName = (day: DayData) => (lang === 'en' && day.dayName_en) ? day.dayName_en : day.dayName;
 
     const createArtistCard = (artist: Artist, stageName: string, color: string) => (
         <div className="artist-card">
@@ -35,20 +30,17 @@ export default function Artists({ weekData, lang }: { weekData: DayData[], lang:
                 <div className="artist-avatar-container">
                     <img
                         src={artist.image}
-                        alt={getArtistName(artist)}
+                        alt={artist.name}
                         className="artist-avatar"
                         style={{ border: `4px solid ${color}60` }}
                         onError={(e) => (e.currentTarget.src = '/uploads/default_artist.png')}
                     />
                 </div>
-                <h3 className="artist-name">{getArtistName(artist)}</h3>
+                <h3 className="artist-name">{artist.name}</h3>
                 <p className="artist-venue">@ Lemar Bistro</p>
             </div>
         </div>
     );
-
-    const liveStageName = lang === 'tr' ? 'Canlı Kat' : 'Live Stage';
-    const terraceStageName = lang === 'tr' ? 'Teras Kat' : 'Terrace Stage';
 
     return (
         <div className="artist-grid">
@@ -70,16 +62,16 @@ export default function Artists({ weekData, lang }: { weekData: DayData[], lang:
                             }
                         }}
                     >
-                        <div className="tab-day-name">{getDayName(day)}</div>
-                        {index === todayDayIndex && <div className="tab-today-badge">{lang === 'tr' ? 'Bugün' : 'Today'}</div>}
+                        <div className="tab-day-name">{day.dayName}</div>
+                        {index === todayDayIndex && <div className="tab-today-badge">Bugün</div>}
                     </button>
                 ))}
             </div>
 
             <div id="artist-content-container">
                 <div className="artists-day-content">
-                    {activeDay.artist1?.name && createArtistCard(activeDay.artist1, liveStageName, '#FF6B6B')}
-                    {activeDay.artist2?.name && createArtistCard(activeDay.artist2, terraceStageName, '#4ECDC4')}
+                    {activeDay.artist1?.name && createArtistCard(activeDay.artist1, 'Canlı Kat', '#FF6B6B')}
+                    {activeDay.artist2?.name && createArtistCard(activeDay.artist2, 'Teras Kat', '#4ECDC4')}
                 </div>
             </div>
         </div>

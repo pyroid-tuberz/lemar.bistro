@@ -1,19 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface MenuItem {
     name: string;
-    name_en?: string;
     description?: string;
-    description_en?: string;
     price: string;
     category: string;
 }
 
 interface Category {
     name: string;
-    name_en?: string;
     parent: string | null;
     color: string;
     size: string;
@@ -24,7 +21,7 @@ interface MenuData {
     categories: Record<string, Category>;
 }
 
-export default function MenuSystem({ initialData, lang }: { initialData: MenuData, lang: 'tr' | 'en' }) {
+export default function MenuSystem({ initialData }: { initialData: MenuData }) {
     const [historyStack, setHistoryStack] = useState<string[]>(['root']);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<MenuItem[]>([]);
@@ -59,9 +56,7 @@ export default function MenuSystem({ initialData, lang }: { initialData: MenuDat
         }
         const filtered = initialData.items.filter(item =>
             (item.name && item.name.toLowerCase().includes(q)) ||
-            (item.name_en && item.name_en.toLowerCase().includes(q)) ||
-            (item.description && item.description.toLowerCase().includes(q)) ||
-            (item.description_en && item.description_en.toLowerCase().includes(q))
+            (item.description && item.description.toLowerCase().includes(q))
         );
         setSearchResults(filtered);
     };
@@ -86,25 +81,21 @@ export default function MenuSystem({ initialData, lang }: { initialData: MenuDat
         hierarchy[parent].push(catId);
     });
 
-    const getCategoryName = (cat: Category) => (lang === 'en' && cat.name_en) ? cat.name_en : cat.name;
-    const getItemName = (item: MenuItem) => (lang === 'en' && item.name_en) ? item.name_en : item.name;
-    const getItemDesc = (item: MenuItem) => (lang === 'en' && item.description_en) ? item.description_en : item.description;
-
     return (
         <div className="menu-system" style={{ position: 'relative' }}>
             <div className="search-container">
                 <input
                     type="text"
                     id="search-input"
-                    placeholder={lang === 'tr' ? "Ürün Ara... (Örn: Votka, Burger)" : "Search... (e.g., Vodka, Burger)"}
+                    placeholder="Ürün Ara... (Örn: Votka, Burger)"
                     value={searchQuery}
                     onChange={(e) => handleSearch(e.target.value)}
                 />
             </div>
 
             <div id="menu-nav-bar" style={{ display: currentPanelId === 'root' ? 'none' : 'flex', padding: '0 20px 10px 20px', gap: '10px', zIndex: 100, position: 'relative' }}>
-                <button onClick={goBack} className="nav-control-btn">{lang === 'tr' ? '← Geri' : '← Back'}</button>
-                <button onClick={goHome} className="nav-control-btn">{lang === 'tr' ? '⌂ Ana Menü' : '⌂ Main Menu'}</button>
+                <button onClick={goBack} className="nav-control-btn">← Geri</button>
+                <button onClick={goHome} className="nav-control-btn">⌂ Ana Menü</button>
             </div>
 
             {Object.keys(categories).map(catId => {
@@ -125,20 +116,19 @@ export default function MenuSystem({ initialData, lang }: { initialData: MenuDat
 
                 return (
                     <div key={catId} id={`panel-${catId}`} className={`menu-panel ${isActive ? 'is-active' : ''}`} style={{ display: isActive ? 'block' : 'none' }}>
-                        <h2 className="panel-title">{getCategoryName(cat)}</h2>
+                        <h2 className="panel-title">{cat.name}</h2>
                         {sortedSubIds.length > 0 && (
                             <div className="main-menu">
                                 {sortedSubIds.map(subId => {
                                     const subCat = categories[subId];
-                                    const subCatName = getCategoryName(subCat);
                                     return (
                                         <button
                                             key={subId}
-                                            className={`nav-button ${(subCatName || '').length >= 9 ? 'long-text' : ''}`}
+                                            className={`nav-button ${subCat.name.length >= 9 ? 'long-text' : ''}`}
                                             style={{ borderColor: subCat.color || 'var(--primary)', color: subCat.color || 'var(--primary)' }}
                                             onClick={() => navigateTo(subId)}
                                         >
-                                            <span>{subCatName}</span>
+                                            <span>{subCat.name}</span>
                                         </button>
                                     );
                                 })}
@@ -149,10 +139,10 @@ export default function MenuSystem({ initialData, lang }: { initialData: MenuDat
                                 {panelItems.map((item, idx) => (
                                     <div key={idx} className="menu-item">
                                         <div className="menu-item-header">
-                                            <h3 className="menu-item-name">{getItemName(item)}</h3>
+                                            <h3 className="menu-item-name">{item.name}</h3>
                                             <span className="menu-item-price">{item.price}</span>
                                         </div>
-                                        {getItemDesc(item) && <p className="menu-item-description">{getItemDesc(item)}</p>}
+                                        {item.description && <p className="menu-item-description">{item.description}</p>}
                                     </div>
                                 ))}
                             </div>
@@ -163,21 +153,21 @@ export default function MenuSystem({ initialData, lang }: { initialData: MenuDat
 
             {currentPanelId === 'search-results' && (
                 <div id="panel-search-results" className="menu-panel is-active">
-                    <h2 className="panel-title">{lang === 'tr' ? 'Arama Sonuçları' : 'Search Results'}</h2>
+                    <h2 className="panel-title">Arama Sonuçları</h2>
                     {searchResults.length > 0 ? (
                         <div className="menu-item-list">
                             {searchResults.map((item, idx) => (
                                 <div key={idx} className="menu-item">
                                     <div className="menu-item-header">
-                                        <h3 className="menu-item-name">{getItemName(item)}</h3>
+                                        <h3 className="menu-item-name">{item.name}</h3>
                                         <span className="menu-item-price">{item.price}</span>
                                     </div>
-                                    {getItemDesc(item) && <p className="menu-item-description">{getItemDesc(item)}</p>}
+                                    {item.description && <p className="menu-item-description">{item.description}</p>}
                                 </div>
                             ))}
                         </div>
                     ) : (
-                        <p style={{ textAlign: 'center', color: 'white' }}>{lang === 'tr' ? 'Sonuç bulunamadı.' : 'No results found.'}</p>
+                        <p style={{ textAlign: 'center', color: 'white' }}>Sonuç bulunamadı.</p>
                     )}
                 </div>
             )}
