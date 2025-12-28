@@ -1,7 +1,5 @@
-'use client'; // This layout now uses client-side context
-
 import type { Metadata } from "next";
-import { LanguageProvider } from "@/contexts/LanguageContext";
+import { Providers } from "@/components/Providers";
 // import "./globals.css"; // Already imported by overwriting
 
 // Metadata can still be exported from a client component layout
@@ -26,9 +24,9 @@ export default function RootLayout({
         {/* External CSS link removed in favor of globals.css imports, but re-adding fonts here for safety if imports fail or for faster loading */}
       </head>
       <body suppressHydrationWarning>
-        <LanguageProvider>
+        <Providers>
           {children}
-        </LanguageProvider>
+        </Providers>
       </body>
     </html>
   );
