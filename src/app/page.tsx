@@ -33,7 +33,6 @@ export default async function Home() {
   return (
     <div className={timeSlot} style={{
       backgroundImage: `linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/${bgUrl}')`,
-      backgroundAttachment: 'fixed',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       minHeight: '100vh'

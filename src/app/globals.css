@@ -25,6 +25,13 @@ body {
   box-sizing: border-box;
 }
 
+/* Desktop: keep fixed background */
+.sabah,
+.oglen,
+.aksam {
+  background-attachment: fixed;
+}
+
 .header {
   min-height: 100vh;
   display: flex;
@@ -845,6 +852,22 @@ img {
     font-size: 1rem !important;
     margin-top: 15px;
     letter-spacing: 1px;
+  }
+
+  /* Reduce menu button size on mobile */
+  .menu-button {
+    padding: 12px 30px !important;
+    font-size: 1.1rem !important;
+    margin-top: 25px;
+    letter-spacing: 1px;
+  }
+
+  /* Critical: Disable fixed background on mobile for performance */
+  body,
+  .sabah,
+  .oglen,
+  .aksam {
+    background-attachment: scroll !important;
   }
 
   .menu-system {
