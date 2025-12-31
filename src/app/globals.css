@@ -889,10 +889,18 @@ img {
   }
 
   .main-menu .nav-button {
-    height: 100px;
-    /* Reduced height further from 140px */
-    padding: 8px;
-    /* Minimal padding */
+    height: auto;
+    /* Let content dictate height */
+    min-height: 70px;
+    /* Small minimum height */
+    padding: 8px 4px;
+    /* Very tight padding */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    /* Slightly tighter corners */
   }
 
   .main-menu .nav-button svg {
