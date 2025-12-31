@@ -883,29 +883,34 @@ img {
 
   /* Root menu grid mobile optimization */
   .main-menu {
-    grid-template-columns: repeat(2, 1fr);
-    /* Force 2 columns */
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    /* Force 3 columns as requested */
+    gap: 8px;
   }
 
   .main-menu .nav-button {
-    height: 140px;
-    /* Reduced height */
-    padding: 10px;
+    height: 100px;
+    /* Reduced height further from 140px */
+    padding: 8px;
+    /* Minimal padding */
   }
 
   .main-menu .nav-button svg {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 5px;
   }
 
   .main-menu .nav-button span {
-    font-size: 1rem;
+    font-size: 0.8rem;
+    /* Smaller text */
+    line-height: 1.2;
+    display: block;
   }
 
   /* Sub-menus mobile optimization */
   .menu-panel:not([data-panel-id="root"]) .nav-button {
-    width: 95% !important;
+    width: 100% !important;
     /* Full width for easier tapping */
     margin: 0 auto;
     padding: 15px;
