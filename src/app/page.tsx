@@ -40,7 +40,7 @@ export default async function Home() {
         height: '100%',
         zIndex: -1,
         backgroundImage: `url('/${bgUrl}')`,
-        backgroundSize: '100% 100%',
+        backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }} />
