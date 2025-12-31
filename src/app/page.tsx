@@ -33,10 +33,9 @@ export default async function Home() {
   return (
     <div className={timeSlot} style={{
       backgroundImage: `url('/${bgUrl}')`,
-      backgroundSize: 'contain',
+      backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
-      backgroundColor: '#121212',
       minHeight: '100vh'
     }}>
       <div className="header">
