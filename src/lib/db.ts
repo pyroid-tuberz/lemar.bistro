@@ -37,21 +37,29 @@ export async function readJson(filename: string) {
 }
 
 export async function writeJson(filename: string, data: any) {
+    let success = false;
+
+    // 1. Write to local filesystem (CRITICAL for local dev)
     try {
-        // Upsert data to Supabase
+        const filePath = path.join(DATA_DIR, filename);
+        await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
+        success = true;
+    } catch (fsError) {
+        console.error(`Error writing local file ${filename}:`, fsError);
+    }
+
+    // 2. Try Supabase (Optional backup)
+    try {
         const { error } = await supabase
             .from('app_data')
             .upsert({ key: filename, value: data });
 
-        if (error) {
-            console.error('Supabase Write Error:', error);
-            return false;
-        }
-        return true;
-    } catch (error) {
-        console.error(`Error writing to ${filename}:`, error);
-        return false;
+        if (error) console.warn('Supabase backup failed (ignoring):', error.message);
+    } catch (sbError) {
+        // Ignore supabase errors if we are running locally without credentials
     }
+
+    return success;
 }
 
 // Simple auth check helper (mirroring legacy logic)
