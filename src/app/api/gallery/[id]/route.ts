@@ -14,24 +14,37 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
         }
 
         const data = await readJson('gallery.json') || { images: [] };
-        
+
         const imageToDelete = data.images.find((img: any) => img.id === id);
         if (!imageToDelete) {
             return NextResponse.json({ error: 'Image not found' }, { status: 404 });
         }
 
-        // Delete from Supabase Storage
+        // Delete from Local Filesystem (if path starts with /uploads/)
+        try {
+            const imageUrl = imageToDelete.src;
+            if (imageUrl.startsWith('/uploads/')) {
+                const fs = require('fs/promises');
+                const path = require('path');
+                const filePath = path.join(process.cwd(), 'public', imageUrl); // /uploads/... includes slash
+                await fs.unlink(filePath).catch((e: any) => console.warn('Local file delete failed:', e.message));
+            }
+        } catch (localErr) {
+            console.error('Error deleting local file:', localErr);
+        }
+
+        // Delete from Supabase Storage (Optional)
         try {
             const imageUrl = imageToDelete.src;
             const filename = imageUrl.substring(imageUrl.lastIndexOf('/') + 1);
-            
-            if (filename) {
+
+            if (filename && !imageUrl.startsWith('/uploads/')) { // Only if not local
                 const { error: deleteError } = await supabase.storage
                     .from('lemar-uploads')
                     .remove([filename]);
-                
+
                 if (deleteError) {
-                    console.warn(`Supabase delete warning for ${filename}: ${deleteError.message}`);
+                    console.warn(`Supabase delete warning by filename ${filename}: ${deleteError.message}`);
                 }
             }
         } catch (storageError: any) {
