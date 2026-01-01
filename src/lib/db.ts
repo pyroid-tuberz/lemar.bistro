@@ -6,7 +6,8 @@ const DATA_DIR = path.join(process.cwd(), 'public');
 
 export async function readJson(filename: string) {
     try {
-        // 1. Try fetching from Supabase
+        console.log(`Reading ${filename} from Supabase...`);
+        // 1. Try fetching from Supabase (Primary Source)
         const { data, error } = await supabase
             .from('app_data')
             .select('value')
@@ -17,18 +18,24 @@ export async function readJson(filename: string) {
             return data.value;
         }
 
-        // 2. If not found in Supabase (first load), fallback to local JSON
-        // & optional: Migrate it to Supabase immediately? 
-        // Let's just return it. Writing will happen on next 'writeJson'.
+        // 2. If not found in Supabase (First deployment), read from local file as Initial State
+        console.log(`${filename} not found in Supabase. Loading initial data from file...`);
         const filePath = path.join(DATA_DIR, filename);
-        const fileContent = await fs.readFile(filePath, 'utf8');
-        const json = JSON.parse(fileContent);
 
-        // Optional: Auto-migrate on read if missing?
-        // This ensures the DB gets populated on first read of any page.
-        // But writeJson might be safer to be explicit. 
-        // Let's stick to simple fallback for now.
-        return json;
+        try {
+            const fileContent = await fs.readFile(filePath, 'utf8');
+            const json = JSON.parse(fileContent);
+
+            // Auto-migrate to Supabase so it exists next time
+            // This is crucial for Vercel cold starts
+            await writeJson(filename, json);
+
+            return json;
+        } catch (filesErr) {
+            console.warn(`Could not read initial local file ${filename}:`, filesErr);
+            return filename.includes('gallery') ? { images: [] } :
+                filename.includes('menu') ? { items: [], categories: {} } : {};
+        }
 
     } catch (error) {
         console.error(`Error reading ${filename}:`, error);
@@ -37,29 +44,22 @@ export async function readJson(filename: string) {
 }
 
 export async function writeJson(filename: string, data: any) {
-    let success = false;
-
-    // 1. Write to local filesystem (CRITICAL for local dev)
     try {
-        const filePath = path.join(DATA_DIR, filename);
-        await fs.writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
-        success = true;
-    } catch (fsError) {
-        console.error(`Error writing local file ${filename}:`, fsError);
-    }
-
-    // 2. Try Supabase (Optional backup)
-    try {
+        console.log(`Writing ${filename} to Supabase...`);
+        // Upsert data to Supabase (Production Source)
         const { error } = await supabase
             .from('app_data')
             .upsert({ key: filename, value: data });
 
-        if (error) console.warn('Supabase backup failed (ignoring):', error.message);
-    } catch (sbError) {
-        // Ignore supabase errors if we are running locally without credentials
+        if (error) {
+            console.error('Supabase Write Error:', error);
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error(`Error writing to ${filename}:`, error);
+        return false;
     }
-
-    return success;
 }
 
 // Simple auth check helper (mirroring legacy logic)
